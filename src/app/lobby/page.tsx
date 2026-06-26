@@ -39,33 +39,33 @@ export default function LobbyPage() {
           animate={{ opacity: 1, y: 0 }}
           className="pointer-events-auto"
         >
-          <h1 className="text-xl sm:text-2xl font-display font-bold neon-text-cyan">
-            渋谷 自動販売機通り
-          </h1>
-          <p className="text-[11px] text-white/50 tracking-widest mt-0.5">
-            SHIBUYA · VENDING STREET
-          </p>
-        </motion.div>
-        <div className="pointer-events-auto flex items-center gap-2 glass rounded-full px-3 py-2 text-xs">
-          <MapPin className="w-3.5 h-3.5 text-cyber-lime" />
-          <span className="text-white/70">walking {kmMarker}m</span>
-          <div className="hidden sm:flex items-center gap-1 ml-2">
-            <button
-              onClick={() => scrollBy(-1)}
-              aria-label="scroll left"
-              className="w-8 h-8 rounded-full hover:bg-white/10 grid place-items-center"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => scrollBy(1)}
-              aria-label="scroll right"
-              className="w-8 h-8 rounded-full hover:bg-white/10 grid place-items-center"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+<h1 className="text-xl sm:text-2xl font-display font-bold neon-text-cyan">
+             カプセル 自動販売機通り
+           </h1>
+           <p className="text-[11px] text-white/50 tracking-widest mt-0.5">
+             CDMX · CALLEJÓN DE CÁPSULAS
+           </p>
+         </motion.div>
+         <div className="pointer-events-auto flex items-center gap-2 glass rounded-full px-3 py-2 text-xs">
+           <MapPin className="w-3.5 h-3.5 text-cyber-lime" />
+           <span className="text-white/70">caminando {kmMarker} m</span>
+           <div className="hidden sm:flex items-center gap-1 ml-2">
+             <button
+               onClick={() => scrollBy(-1)}
+               aria-label="desplazar izquierda"
+               className="w-8 h-8 rounded-full hover:bg-white/10 grid place-items-center"
+             >
+               <ChevronLeft className="w-4 h-4" />
+             </button>
+             <button
+               onClick={() => scrollBy(1)}
+               aria-label="desplazar derecha"
+               className="w-8 h-8 rounded-full hover:bg-white/10 grid place-items-center"
+             >
+               <ChevronRight className="w-4 h-4" />
+             </button>
+           </div>
+         </div>
       </div>
 
       {/* the street */}

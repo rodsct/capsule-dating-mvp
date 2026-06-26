@@ -19,12 +19,12 @@ function LoginForm() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim()) {
-      setError("Enter your username.");
+      setError("Escribe tu nombre de usuario.");
       return;
     }
     const u = login(username);
     if (!u) {
-      setError("No account found. Register first — every username is fair game.");
+      setError("No se encontró la cuenta. Regístrate primero — cualquier usuario funciona.");
       return;
     }
     router.push(next);
@@ -43,36 +43,36 @@ function LoginForm() {
             Capsule Dating
           </span>
         </div>
-        <h1 className="font-display font-bold text-2xl mb-1">Welcome back</h1>
+        <h1 className="font-display font-bold text-2xl mb-1">Bienvenido de vuelta</h1>
         <p className="text-white/60 text-sm mb-6">
-          Log in with your username. (Mock auth — stored in your browser only.)
+          Inicia sesión con tu nombre de usuario. (Auth simulado — guardado solo en tu navegador.)
         </p>
 
         <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="block text-xs text-white/60 mb-1.5">
-              Username
+              Nombre de usuario
             </label>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g. neonfox"
+              placeholder="p. ej. zorro_neon"
               className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm outline-none focus:border-cyber-neon focus:shadow-neon transition"
             />
           </div>
           {error && <p className="text-sm text-cyber-neon">{error}</p>}
           <NeonButton type="submit" className="w-full justify-center">
-            <LogIn className="w-4 h-4" /> Log in
+            <LogIn className="w-4 h-4" /> Entrar
           </NeonButton>
         </form>
 
         <p className="text-center text-sm text-white/50 mt-5">
-          New here?{" "}
+          ¿Nuevo aquí?{" "}
           <Link
             href={`/register?next=${encodeURIComponent(next)}`}
             className="text-cyber-cyan underline"
           >
-            Create a free account
+            Crea una cuenta gratis
           </Link>
         </p>
       </motion.div>
@@ -85,7 +85,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="grid place-items-center py-32 text-white/50 text-sm">
-          Loading…
+          Cargando…
         </div>
       }
     >

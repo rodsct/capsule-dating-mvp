@@ -10,7 +10,7 @@ export interface VendingMachine {
   name: string;
   /** Japanese kanji shown on the neon sign */
   kanji: string;
-  /** short romaji label under the kanji */
+  /** short label under the kanji (kept as "romaji" for the visual sign) */
   romaji: string;
   tagline: string;
   description: string;
@@ -22,7 +22,7 @@ export interface VendingMachine {
   boxColor: string; // hex for capsule boxes
   /** hex for the neon sign ring/glow */
   signColor: string;
-  /** price in yen shown on the coin slot */
+  /** price in Mexican pesos (MXN) shown on the coin slot */
   price: number;
   position: { x: number; z: number }; // 3D-ish position in lobby
   rotation: number; // y rotation in lobby

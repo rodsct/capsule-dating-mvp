@@ -23,7 +23,19 @@ export function rarityColor(rarity: "common" | "rare" | "legendary"): string {
 }
 
 export function rarityLabel(rarity: "common" | "rare" | "legendary"): string {
-  return rarity.charAt(0).toUpperCase() + rarity.slice(1);
+  switch (rarity) {
+    case "legendary":
+      return "Legendaria";
+    case "rare":
+      return "Rara";
+    default:
+      return "Común";
+  }
+}
+
+/** Format a price in Mexican pesos (MXN) for display, e.g. 29 -> "$29 MXN". */
+export function formatMXN(price: number): string {
+  return `$${price} MXN`;
 }
 
 const AVATAR_STYLES = [

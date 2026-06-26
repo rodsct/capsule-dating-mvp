@@ -9,7 +9,7 @@ const MATCHES_KEY = "capsule-dating:matches";
 const DEMO_FLAG_KEY = "capsule-dating:demo-seeded";
 const STARTING_CREDITS = 3;
 const DEMO_CREDITS = 10;
-const DEMO_USERNAME = "demo_capsuler";
+const DEMO_USERNAME = "demo_chilango";
 
 function safeParse<T>(raw: string | null, fallback: T): T {
   if (!raw) return fallback;

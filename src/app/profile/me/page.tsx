@@ -13,7 +13,7 @@ export default function MyProfilePage() {
   if (!ready) {
     return (
       <div className="grid place-items-center py-32 text-white/50 text-sm">
-        Loading…
+        Cargando…
       </div>
     );
   }
@@ -22,15 +22,15 @@ export default function MyProfilePage() {
     return (
       <div className="mx-auto max-w-md px-4 py-24 text-center">
         <User className="w-10 h-10 text-cyber-neon mx-auto mb-4" />
-        <h1 className="font-display font-bold text-2xl mb-3">Not logged in</h1>
+        <h1 className="font-display font-bold text-2xl mb-3">No has iniciado sesión</h1>
         <p className="text-white/60 text-sm mb-6">
-          A demo account is auto-created on first visit, but you can log out and
-          make your own capsule collector.
+          Se crea una cuenta demo automática en la primera visita, pero puedes
+          salir y crear tu propio coleccapsulista.
         </p>
         <div className="flex justify-center gap-3">
-          <NeonButton href="/register">Join free</NeonButton>
+          <NeonButton href="/register">Únete gratis</NeonButton>
           <NeonButton href="/login" variant="ghost">
-            Log in
+            Entrar
           </NeonButton>
         </div>
       </div>
@@ -49,10 +49,10 @@ export default function MyProfilePage() {
         <div className="flex items-start justify-between gap-4 flex-wrap">
 <div>
               <span className="text-xs uppercase tracking-widest text-cyber-neon mb-1 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" /> Your capsule account
+                <Sparkles className="w-3.5 h-3.5" /> Tu cuenta de cápsulas
                 {isDemo && (
                   <span className="ml-2 px-1.5 py-0.5 rounded text-[9px] bg-cyber-lime/20 text-cyber-lime font-bold tracking-widest">
-                    DEMO MODE
+                    MODO DEMO
                   </span>
                 )}
               </span>
@@ -60,26 +60,26 @@ export default function MyProfilePage() {
                 @{user.username}
               </h1>
               <p className="text-white/50 text-xs mt-1">
-                Joined {new Date(user.createdAt).toLocaleDateString()}
+                Te uniste {new Date(user.createdAt).toLocaleDateString("es-MX")}
               </p>
             </div>
           <div className="flex items-center gap-2">
             <div className="px-3 py-2 rounded-full glass border border-cyber-lime/40 text-cyber-lime text-sm font-semibold flex items-center gap-1.5">
-              <Coins className="w-4 h-4" /> {user.credits} credits
+              <Coins className="w-4 h-4" /> {user.credits} monedas
             </div>
             <button
               onClick={logout}
               className="px-3 py-2 rounded-full glass text-white/70 hover:text-cyber-neon text-xs inline-flex items-center gap-1.5"
             >
-              <LogOut className="w-3.5 h-3.5" /> Log out
+              <LogOut className="w-3.5 h-3.5" /> Salir
             </button>
           </div>
         </div>
 
         <div className="mt-6 p-4 rounded-2xl bg-white/5 border border-white/10">
           <p className="text-sm text-white/70 mb-3">
-            Out of coins? In this MVP you can grab a top-up to keep pulling at the
-            vending machines (mock — no payment).
+            ¿Sin monedas? En este MVP puedes tomar una recarga para seguir tirando
+            en las máquinas (simulado — sin pago real).
           </p>
           <div className="flex gap-2">
             {[3, 5, 10].map((n) => (
@@ -88,7 +88,7 @@ export default function MyProfilePage() {
                 onClick={() => addCredits(n)}
                 className="px-4 py-2 rounded-full bg-cyber-cyan text-black text-xs font-semibold hover:shadow-neon-cyan transition-all"
               >
-                +{n} credits
+                +{n} monedas
               </button>
             ))}
           </div>
@@ -97,14 +97,14 @@ export default function MyProfilePage() {
 
       <div className="mt-8">
         <h2 className="font-display font-bold text-xl mb-4 flex items-center gap-2">
-          <Heart className="w-5 h-5 text-cyber-neon" /> Your capsule pulls
+          <Heart className="w-5 h-5 text-cyber-neon" /> Tus tirones de cápsula
         </h2>
 
         {matches.length === 0 ? (
           <div className="glass rounded-2xl p-8 text-center text-white/60 text-sm">
-            No pulls yet.{" "}
+            Aún no has tirado ninguna cápsula.{" "}
             <Link href="/lobby" className="text-cyber-cyan underline">
-              Enter the lobby →
+              Entra a la sala →
             </Link>
           </div>
         ) : (
@@ -134,7 +134,7 @@ export default function MyProfilePage() {
                         {p.emoji} {p.name}, {p.age}
                       </div>
                       <div className="text-xs text-white/50">
-                        {new Date(m.openedAt).toLocaleString()}
+                        {new Date(m.openedAt).toLocaleString("es-MX")}
                       </div>
                     </div>
                   </Link>

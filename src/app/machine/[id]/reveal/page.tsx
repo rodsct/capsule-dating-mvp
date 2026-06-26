@@ -14,7 +14,7 @@ import {
   Gift,
 } from "lucide-react";
 import { getMachine, getCapsulesForMachine, getPerson } from "@/data/mock-data";
-import { rarityColor, pickRandom } from "@/lib/utils";
+import { rarityColor, pickRandom, formatMXN } from "@/lib/utils";
 import { MACHINES } from "@/data/mock-data";
 import { useAuth } from "@/lib/auth";
 import type { MachineId, Person } from "@/lib/types";
@@ -62,13 +62,13 @@ export default function RevealPage() {
     }
     if (credits <= 0) {
       setError(
-        "You're out of credits. Top up on your profile or log out and make a friend?",
+        "Te quedaste sin monedas. Recarga en tu perfil o sal y consigue un amig@?",
       );
       return;
     }
     const ok = spendCredit();
     if (!ok) {
-      setError("Couldn't spend a credit.");
+      setError("No se pudo gastar una moneda.");
       return;
     }
     const pick = getPerson(pickRandom(capsules).personId)!;
@@ -100,7 +100,7 @@ export default function RevealPage() {
   if (!ready) {
     return (
       <div className="grid place-items-center py-32 text-white/50 text-sm">
-        Loading…
+        Cargando…
       </div>
     );
   }
@@ -118,7 +118,7 @@ export default function RevealPage() {
           href={`/machine/${machine.id}`}
           className="inline-flex items-center gap-1 text-sm text-white/60 hover:text-white mb-6"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to {machine.name}
+          <ArrowLeft className="w-4 h-4" /> Volver a {machine.name}
         </Link>
 
         <AnimatePresence mode="wait">
@@ -139,21 +139,21 @@ export default function RevealPage() {
                 dropEmoji={machine.emoji}
               />
               <h1 className="font-display font-bold text-2xl sm:text-3xl mt-8 mb-3">
-                Drop a coin &amp; pull?
+                ¿Dejas una moneda y tiras?
               </h1>
               <p className="text-white/60 mb-6 max-w-md mx-auto text-sm">
-                One credit cranks the dial, spins the reels, and dispenses a
-                random {machine.name} capsule. You&apos;ll see personality hints
-                first — reveal the photo when you&apos;re vibing.
+                Una moneda gira el dial, hace girar los carretes y dispensa una
+                cápsula aleatoria de {machine.name}. Primero verás pistas de
+                personalidad — revela la foto cuando teLate el vibe.
               </p>
 
               <div className="flex items-center justify-center gap-3 mb-6 text-xs">
                 <span className="glass px-3 py-1.5 rounded-full flex items-center gap-1.5">
                   <Coins className="w-3.5 h-3.5 text-cyber-lime" />
-                  Cost: ¥{machine.price} (1 credit)
+                  Costo: {formatMXN(machine.price)} (1 moneda)
                 </span>
                 <span className="glass px-3 py-1.5 rounded-full">
-                  You have:{" "}
+                  Tienes:{" "}
                   <span className="text-cyber-lime font-semibold">
                     {user ? credits : "—"}
                   </span>
@@ -165,16 +165,16 @@ export default function RevealPage() {
               )}
 
               <NeonButton onClick={startReveal} className="px-8 py-3.5 text-base">
-                <Sparkles className="w-4 h-4" /> Insert ¥{machine.price} &amp; pull
+                <Sparkles className="w-4 h-4" /> Inserta {formatMXN(machine.price)} y tira
               </NeonButton>
 
               {!user && (
                 <p className="mt-4 text-xs text-white/40">
-                  You&apos;ll need to{" "}
+                  Necesitarás{" "}
                   <Link href="/register" className="text-cyber-cyan underline">
-                    create a free account
+                    crear una cuenta gratis
                   </Link>{" "}
-                  first.
+                  primero.
                 </p>
               )}
             </motion.div>
@@ -197,7 +197,7 @@ export default function RevealPage() {
                 dropEmoji={person?.emoji ?? machine.emoji}
               />
               <p className="mt-8 neon-text animate-flicker font-display font-bold text-xl">
-                {dropped ? "Cracking open…" : "Spinning the reels…"}
+                {dropped ? "Abriendo la cápsula…" : "Girando los carretes…"}
               </p>
             </motion.div>
           )}
@@ -212,7 +212,7 @@ export default function RevealPage() {
             >
               <div className="text-center mb-6">
                 <span className="text-xs uppercase tracking-widest text-white/40">
-                  You pulled a capsule from {machine.name}
+                  Tiraste una cápsula de {machine.name}
                 </span>
                 <h1 className="mt-2 font-display font-bold text-3xl">
                   {person.emoji} {person.name.split(" ")[0]}, {person.age}
@@ -224,7 +224,7 @@ export default function RevealPage() {
 
               <div className="glass rounded-2xl p-6 mb-6 scanlines">
                 <h2 className="text-sm font-semibold text-cyber-neon mb-4 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" /> Personality hints
+                  <Sparkles className="w-4 h-4" /> Pistas de personalidad
                 </h2>
                 <ul className="space-y-3">
                   {person.hints.map((h, i) => (
@@ -242,7 +242,7 @@ export default function RevealPage() {
                 </ul>
 
                 <div className="mt-6 pt-5 border-t border-white/10">
-                  <div className="text-xs text-white/40 mb-2">Into</div>
+                  <div className="text-xs text-white/40 mb-2">Le interesa</div>
                   <div className="flex flex-wrap gap-2">
                     {person.interests.map((tag) => (
                       <span
@@ -258,19 +258,19 @@ export default function RevealPage() {
 
               <div className="text-center">
                 <p className="text-sm text-white/60 mb-4">
-                  Liking what you see? Unlock the photo &amp; full profile. (Demo:
-                  free mutual-interest unlock.)
+                  ¿Te Late lo que ves? Desbloquea la foto &amp; perfil completo.
+                  (Demo: desbloqueo de interés mutuo gratis.)
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-3">
                   <NeonButton onClick={unlockPhoto} variant="cyan">
-                    <Eye className="w-4 h-4" /> Reveal photo (mutual interest)
+                    <Eye className="w-4 h-4" /> Revelar foto (interés mutuo)
                   </NeonButton>
                   <button
                     type="button"
                     onClick={startReveal}
                     className="inline-flex items-center justify-center gap-2 font-semibold rounded-full px-6 py-3 text-sm glass hover:bg-white/10"
                   >
-                    Pull again →
+                    Tirar otra →
                   </button>
                 </div>
               </div>
@@ -310,28 +310,28 @@ export default function RevealPage() {
 
                 <div>
                   <h1 className="font-display font-bold text-2xl mb-1">
-                    It&apos;s a match-worthy capsule ✨
+                    Es una cápsula digna de match ✨
                   </h1>
                   <p className="text-white/70 text-sm leading-relaxed mb-4">
                     {person.bio}
                   </p>
 
                   <dl className="space-y-3 text-sm">
-                    <Info label="Love language" value={person.loveLanguage} />
-                    <Info label="Looking for" value={person.lookingFor} />
-                    <Info label="On repeat" value={person.song} />
+                    <Info label="Lenguaje del amor" value={person.loveLanguage} />
+                    <Info label="Busca" value={person.lookingFor} />
+                    <Info label="En repetición" value={person.song} />
                   </dl>
 
                   <div className="mt-6 flex flex-wrap gap-3">
                     <NeonButton href={`/profile/${person.id}`} variant="neon">
-                      <Heart className="w-4 h-4" /> View full profile
+                      <Heart className="w-4 h-4" /> Ver perfil completo
                     </NeonButton>
                     <button
                       type="button"
                       onClick={() => router.push("/profile/me")}
                       className="inline-flex items-center justify-center gap-2 font-semibold rounded-full px-6 py-3 text-sm glass hover:bg-white/10"
                     >
-                      <Gift className="w-4 h-4" /> Saved to your matches
+                      <Gift className="w-4 h-4" /> Guardado en tus matches
                     </button>
                   </div>
                 </div>
@@ -412,7 +412,7 @@ function SlotMachine({
         <div className="flex items-center justify-between mt-3 mb-2">
           <div className="vm-coin-slot h-1.5 w-16 rounded-sm" />
           <span className="text-[9px] text-cyber-gold/80 tracking-widest">
-            ¥{machine.price}
+            {formatMXN(machine.price)}
           </span>
           <div className="vm-button rounded-full" style={
             {
@@ -429,7 +429,7 @@ function SlotMachine({
         <div className="vm-bin relative h-24 rounded-md overflow-hidden grid place-items-center">
           {!dropped ? (
             <span className="text-[9px] text-white/30 tracking-widest">
-              ▲ 自動販売 WAITING ▲
+              ▲ ESPERANDO ▲
             </span>
           ) : (
             <motion.div
@@ -450,7 +450,7 @@ function SlotMachine({
             </motion.div>
           )}
           <span className="absolute bottom-1 text-[8px] text-white/30 tracking-widest">
-            取出口 EXIT
+            取出口 SALIDA
           </span>
         </div>
       </div>

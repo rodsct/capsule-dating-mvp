@@ -15,7 +15,7 @@ import {
   getCapsulesForMachine,
   getPerson,
 } from "@/data/mock-data";
-import { pickRandom, rarityColor, rarityLabel, classNames } from "@/lib/utils";
+import { pickRandom, rarityColor, rarityLabel, classNames, formatMXN } from "@/lib/utils";
 import type { MachineId } from "@/lib/types";
 import { NeonButton } from "@/components/NeonButton";
 import { useAuth } from "@/lib/auth";
@@ -45,7 +45,7 @@ export default function MachineDetailPage() {
           href="/lobby"
           className="inline-flex items-center gap-1 text-sm text-white/60 hover:text-white mb-6"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to the street
+          <ArrowLeft className="w-4 h-4" /> Volver al callejón
         </Link>
 
         <motion.header
@@ -100,15 +100,15 @@ export default function MachineDetailPage() {
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <NeonButton href={`/machine/${machine.id}/reveal`}>
-                <Sparkles className="w-4 h-4" /> Drop ¥{machine.price} & pull
+                <Sparkles className="w-4 h-4" /> Inserta {formatMXN(machine.price)} y tira
               </NeonButton>
               <span className="glass px-3 py-2 rounded-full text-xs text-white/70 inline-flex items-center gap-1.5">
-                <Coins className="w-3.5 h-3.5 text-cyber-lime" /> You have{" "}
+                <Coins className="w-3.5 h-3.5 text-cyber-lime" /> Tienes{" "}
                 <span className="text-cyber-lime font-semibold">{credits}</span>{" "}
-                credits
+                monedas
               </span>
               <span className="text-xs text-white/40">
-                {capsules.length} capsules in stock
+                {capsules.length} cápsulas en existencia
               </span>
             </div>
           </div>
@@ -124,30 +124,30 @@ export default function MachineDetailPage() {
           <p className="text-sm text-white/70">
             {user ? (
               <>
-                Insert{" "}
-                <span className="text-cyber-gold font-semibold">¥{machine.price}</span>{" "}
-                = <span className="text-cyber-lime font-semibold">1 credit</span>.
-                Each pull dispenses a random {machine.name} capsule.
+                Inserta{" "}
+                <span className="text-cyber-gold font-semibold">{formatMXN(machine.price)}</span>{" "}
+                = <span className="text-cyber-lime font-semibold">1 moneda</span>.
+                Cada tirada dispensa una cápsula aleatoria de {machine.name}.
               </>
             ) : (
-              <>You need 1 credit to pull. A demo account is auto-loaded with 10.</>
+              <>Necesitas 1 moneda para tirar. La cuenta demo se precarga con 10.</>
             )}
           </p>
           {!user && (
             <NeonButton href="/register" variant="ghost" className="py-2 px-4 text-sm">
-              Get free credits
+              Consigue monedas gratis
             </NeonButton>
           )}
           {user && credits <= 0 && (
             <span className="inline-flex items-center gap-1.5 text-xs text-cyber-neon">
-              <Lock className="w-3.5 h-3.5" /> Out of credits — top up on your profile
+              <Lock className="w-3.5 h-3.5" /> Sin monedas — recarga en tu perfil
             </span>
           )}
         </motion.div>
 
         {/* Capsules grid */}
         <div className="flex items-center gap-2 mb-4 text-sm text-white/60">
-          <Zap className="w-4 h-4 text-cyber-lime" /> Capsule stock in this machine
+          <Zap className="w-4 h-4 text-cyber-lime" /> Inventario de cápsulas en esta máquina
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {capsules.map((c, i) => {
@@ -200,7 +200,7 @@ export default function MachineDetailPage() {
                       {rarityLabel(c.rarity)}
                     </span>
                     {isLucky && (
-                      <span className="text-cyber-lime">⚡ lucky pull</span>
+                      <span className="text-cyber-lime">⚡ tirada de la suerte</span>
                     )}
                   </div>
 
@@ -214,7 +214,7 @@ export default function MachineDetailPage() {
         </div>
 
         <div className="mt-10 text-center text-xs text-white/40">
-          Profiles are randomized on every pull — the capsule you open is a surprise.
+          Los perfiles se randomizan en cada tirada — la cápsula que abras es una sorpresa.
         </div>
       </div>
     </div>

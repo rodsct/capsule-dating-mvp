@@ -23,7 +23,7 @@ export default function Navbar() {
             href="/lobby"
             className="hidden sm:inline-block text-white/70 hover:text-white transition"
           >
-            Lobby
+            Sala
           </Link>
           {ready && user ? (
             <>
@@ -38,7 +38,7 @@ export default function Navbar() {
                 onClick={logout}
                 className="px-3 py-1.5 rounded-full text-xs text-white/60 hover:text-cyber-neon transition"
               >
-                Log out
+                Salir
               </button>
             </>
           ) : ready ? (
@@ -47,13 +47,13 @@ export default function Navbar() {
                 href="/login"
                 className="px-3 py-1.5 rounded-full text-xs text-white/80 hover:text-white"
               >
-                Log in
+                Entrar
               </Link>
               <Link
                 href="/register"
                 className="px-3 py-1.5 rounded-full text-xs font-semibold bg-cyber-neon text-black hover:shadow-neon transition"
               >
-                Join free
+                Únete gratis
               </Link>
             </div>
           ) : null}

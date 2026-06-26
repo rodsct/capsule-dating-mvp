@@ -19,7 +19,7 @@ function RegisterForm() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (username.trim().length < 2) {
-      setError("Pick a username with at least 2 characters.");
+      setError("Elige un nombre de usuario con al menos 2 caracteres.");
       return;
     }
     register(username);
@@ -39,45 +39,45 @@ function RegisterForm() {
             Capsule Dating
           </span>
         </div>
-        <h1 className="font-display font-bold text-2xl mb-1">Join the arcade</h1>
+        <h1 className="font-display font-bold text-2xl mb-1">Únete a la sala arcade</h1>
         <p className="text-white/60 text-sm mb-4">
-          Pick a username to start. New members get{" "}
+          Elige un nombre de usuario para empezar. Los miembros nuevos reciben{" "}
           <span className="text-cyber-lime font-semibold inline-flex items-center gap-1">
-            <Coins className="w-3.5 h-3.5" /> 3 free credits
+            <Coins className="w-3.5 h-3.5" /> 3 monedas gratis
           </span>
-          . (A demo account with 10 is auto-loaded on first visit.)
+          . (Una cuenta demo con 10 se precarga en la primera visita.)
         </p>
 
         <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="block text-xs text-white/60 mb-1.5">
-              Username
+              Nombre de usuario
             </label>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g. neonfox"
+              placeholder="p. ej. zorro_neon"
               className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm outline-none focus:border-cyber-neon focus:shadow-neon transition"
             />
           </div>
           {error && <p className="text-sm text-cyber-neon">{error}</p>}
           <NeonButton type="submit" variant="cyan" className="w-full justify-center">
-            <UserPlus className="w-4 h-4" /> Create account
+            <UserPlus className="w-4 h-4" /> Crear cuenta
           </NeonButton>
         </form>
 
         <p className="text-center text-sm text-white/50 mt-5">
-          Already vibing here?{" "}
+          ¿Ya vibreando aquí?{" "}
           <Link
             href={`/login?next=${encodeURIComponent(next)}`}
             className="text-cyber-cyan underline"
           >
-            Log in
+            Entrar
           </Link>
         </p>
 
         <p className="text-center text-[11px] text-white/30 mt-4">
-          Mock auth — everything is stored locally in your browser.
+          Auth simulado — todo se guarda localmente en tu navegador.
         </p>
       </motion.div>
     </div>
@@ -89,7 +89,7 @@ export default function RegisterPage() {
     <Suspense
       fallback={
         <div className="grid place-items-center py-32 text-white/50 text-sm">
-          Loading…
+          Cargando…
         </div>
       }
     >

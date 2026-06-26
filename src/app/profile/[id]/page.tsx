@@ -25,7 +25,7 @@ export default function ProfilePage() {
           href="/lobby"
           className="inline-flex items-center gap-1 text-sm text-white/60 hover:text-white mb-6"
         >
-          <ArrowLeft className="w-4 h-4" /> Back
+          <ArrowLeft className="w-4 h-4" /> Volver
         </Link>
 
         <motion.div
@@ -56,7 +56,7 @@ export default function ProfilePage() {
 
           <div>
             <div className="flex items-center gap-2 text-xs text-cyber-neon mb-2">
-              <Sparkles className="w-3.5 h-3.5" /> Capsule profile
+              <Sparkles className="w-3.5 h-3.5" /> Perfil de cápsula
             </div>
             <h1 className="font-display font-bold text-3xl sm:text-4xl">
               {person.emoji} {person.name}, {person.age}
@@ -75,7 +75,7 @@ export default function ProfilePage() {
 
             <div className="mt-6">
               <div className="text-xs uppercase tracking-wider text-white/40 mb-2">
-                Interests
+                Intereses
               </div>
               <div className="flex flex-wrap gap-2">
                 {person.interests.map((t) => (
@@ -90,13 +90,13 @@ export default function ProfilePage() {
             </div>
 
             <div className="grid sm:grid-cols-2 gap-3 mt-6">
-              <Stat label="Love language" value={person.loveLanguage} />
-              <Stat label="Looking for" value={person.lookingFor} />
+              <Stat label="Lenguaje del amor" value={person.loveLanguage} />
+              <Stat label="Busca" value={person.lookingFor} />
             </div>
 
             <div className="mt-6">
               <div className="text-xs uppercase tracking-wider text-white/40 mb-2">
-                Hints they left
+                Pistas que dejó
               </div>
               <ul className="space-y-2 text-sm text-white/80">
                 {person.hints.map((h, i) => (

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { MotionConfig, motion } from "framer-motion";
 import type { VendingMachine, Capsule } from "@/lib/types";
 import { getCapsulesForMachine, getPerson } from "@/data/mock-data";
-import { classNames, rarityColor } from "@/lib/utils";
+import { classNames, rarityColor, formatMXN } from "@/lib/utils";
 
 type Size = "sm" | "md" | "lg";
 
@@ -99,7 +99,7 @@ export function VendingMachineCab({
                 {machine.romaji}
               </span>
               <span className="text-[7px] text-white/40 tracking-wider mt-0.5">
-                ¥{machine.price}
+                {formatMXN(machine.price)}
               </span>
             </div>
           </div>
@@ -182,7 +182,7 @@ export function VendingMachineCab({
                   } as React.CSSProperties
                 }
               />
-              <span className="text-[6px] text-white/50 tracking-widest">PUSH</span>
+              <span className="text-[6px] text-white/50 tracking-widest">PULSA</span>
             </div>
             {/* coin slot */}
             <div className="flex-1 mx-2 flex items-center justify-center gap-2">
@@ -190,7 +190,7 @@ export function VendingMachineCab({
                 className="vm-coin-slot h-1.5 w-10 rounded-sm"
                 style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.1)" }}
               />
-              <span className="text-[6px] text-cyber-gold/80 tracking-widest">¥</span>
+              <span className="text-[6px] text-cyber-gold/80 tracking-widest">MXN</span>
             </div>
             {/* numeric display */}
             <div className="rounded-sm bg-black/80 border border-cyber-lime/30 px-1.5 py-0.5 text-cyber-lime text-[8px] font-bold tracking-wider shadow-[0_0_8px_rgba(182,255,58,0.5)]">
@@ -200,7 +200,7 @@ export function VendingMachineCab({
 
           {/* dispense bin */}
           <div className="vm-bin absolute left-3 right-3 bottom-3 h-12 rounded-md flex items-end justify-center pb-1.5 overflow-hidden">
-            <span className="text-[7px] text-white/40 tracking-widest">▲ 取出口 EXIT</span>
+            <span className="text-[7px] text-white/40 tracking-widest">▲ 取出口 SALIDA</span>
           </div>
         </div>
 

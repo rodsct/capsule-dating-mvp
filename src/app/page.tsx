@@ -18,18 +18,18 @@ import { VendingMachineCab } from "@/components/VendingMachineCab";
 const FEATURES = [
   {
     icon: Dices,
-    title: "Themed vending machines",
-    body: "Otaku, rock, fitness, artsy, hustle. Walk the neon street, pick a vibe.",
+    title: "Máquinas temáticas de cápsulas",
+    body: "Otaku, rock, fitness, arte y emprendimiento. Recorre el callejón neón y elige tu vibra.",
   },
   {
     icon: Coins,
-    title: "10 free credits",
-    body: "Demo accounts start with 10 credits pre-loaded. Pull capsules right away.",
+    title: "10 monedas gratis",
+    body: "La cuenta demo arranca con 10 monedas precargadas. Abre cápsulas desde el principio.",
   },
   {
     icon: ShieldCheck,
-    title: "Gradual reveal",
-    body: "Personality first, photo later. Mutual interest unlocks the rest.",
+    title: "Revelación gradual",
+    body: "Personalidad primero, foto después. El interés mutuo desbloquea el resto.",
   },
 ];
 
@@ -50,7 +50,7 @@ export default function LandingPage() {
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs font-medium text-cyber-lime mb-6"
         >
           <Sparkles className="w-3.5 h-3.5" />
-          渋谷 · A dating arcade from the year 2099
+          CDMX · Una sala de citas arcade desde el año 2099
         </motion.div>
 
         <motion.h1
@@ -62,7 +62,7 @@ export default function LandingPage() {
           Capsule Dating:
           <br />
           <span className="bg-gradient-to-r from-cyber-neon via-cyber-purple to-cyber-cyan bg-clip-text text-transparent">
-            ガチャ恋の街
+            Amor en cápsula
           </span>
         </motion.h1>
 
@@ -72,9 +72,9 @@ export default function LandingPage() {
           transition={{ duration: 0.6, delay: 0.12 }}
           className="mt-6 max-w-2xl mx-auto text-white/70 text-base sm:text-lg"
         >
-          Step into a neon-soaked Tokyo backstreet of glowing vending machines.
-          Drop a coin, crank the dial, crack open a person-capsule. Personality
-          first — photo later. Romance, but make it arcade.
+          Entra a un callejón neón de la CDMX lleno de máquinas expendedoras
+          brillantes. Deja una moneda, gira el dial, abre una cápsula de
+          persona. Personalidad primero — foto después. Romance, pero arcade.
         </motion.p>
 
         <motion.div
@@ -84,10 +84,10 @@ export default function LandingPage() {
           className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <NeonButton href="/lobby" className="px-8 py-3.5 text-base">
-            <DoorOpen className="w-4 h-4" /> Enter the arcade
+            <DoorOpen className="w-4 h-4" /> Entra a la sala
           </NeonButton>
           <NeonButton href="/register" variant="ghost" className="px-8 py-3.5 text-base">
-            Create a free account
+            Crea una cuenta gratis
           </NeonButton>
         </motion.div>
 
@@ -115,7 +115,7 @@ export default function LandingPage() {
             ))}
           </div>
           <p className="mt-2 text-xs text-white/40 tracking-widest">
-            ← scroll the street →
+            ← recorre el callejón →
           </p>
         </motion.div>
       </section>
@@ -123,7 +123,7 @@ export default function LandingPage() {
       {/* How it works */}
       <section className="relative mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-center font-display font-bold text-2xl sm:text-3xl mb-10">
-          How the arcade works
+          Cómo funciona la sala arcade
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {FEATURES.map((f, i) => (
@@ -154,14 +154,14 @@ export default function LandingPage() {
         >
           <Heart className="w-10 h-10 text-cyber-neon mx-auto mb-4 animate-flicker" />
           <h2 className="font-display font-bold text-2xl sm:text-3xl mb-3">
-            Your next someone is in a capsule.
+            Tu próxima persona está en una cápsula.
           </h2>
           <p className="text-white/60 mb-6 max-w-xl mx-auto">
-            Drop in a coin, crank the dial, let fate roll. You&apos;re demo-logged-in —
-            10 credits are waiting.
+            Deja una moneda, gira el dial, deja que el destino decida. Estás con
+            sesión demo iniciada — 10 monedas te esperan.
           </p>
           <NeonButton href="/lobby" variant="cyan" className="px-8 py-3.5 text-base">
-            Walk the neon street <ArrowRight className="w-4 h-4" />
+            Recorre el callejón neón <ArrowRight className="w-4 h-4" />
           </NeonButton>
         </motion.div>
       </section>
