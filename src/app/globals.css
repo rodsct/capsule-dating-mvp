@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+}
+
+html,
+body {
+  background: #0a0b1e;
+  color: #f3f0ff;
+  min-height: 100%;
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Cyberpunk grid floor */
+.cyber-grid {
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 43, 214, 0.12) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.scanlines::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  mix-blend-mode: overlay;
+}
+
+.neon-text {
+  text-shadow:
+    0 0 8px rgba(255, 43, 214, 0.7),
+    0 0 22px rgba(255, 43, 214, 0.45);
+}
+.neon-text-cyan {
+  text-shadow:
+    0 0 8px rgba(0, 240, 255, 0.7),
+    0 0 22px rgba(0, 240, 255, 0.45);
+}
+
+.glass {
+  background: rgba(18, 19, 43, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Hide scrollbar for horizontal scroll areas */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 3D perspective helpers */
+.scene {
+  perspective: 1400px;
+  perspective-origin: 50% 38%;
+}
+.world {
+  transform-style: preserve-3d;
+  transition: transform 0.18s linear;
+}
+.machine-3d {
+  transform-style: preserve-3d;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0b1e;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#ff2bd6, #9d4edd);
+  border-radius: 8px;
+}

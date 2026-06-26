@@ -1,0 +1,417 @@
+import type { VendingMachine, Person, Capsule, MachineId } from "@/lib/types";
+
+export const MACHINES: VendingMachine[] = [
+  {
+    id: "otaku",
+    name: "Otaku Vault",
+    tagline: "Capsules for the anime-souled",
+    description:
+      "Find your partner in a world of manga, late-night Crunchyroll binges, and convention-hopping energy.",
+    emoji: "🌸",
+    gradient: ["#ff7ad9", "#9d4edd"],
+    accent: "pink",
+    boxColor: "#ff7ad9",
+    position: { x: -6, z: 2 },
+    rotation: 18,
+  },
+  {
+    id: "rock",
+    name: "Distortion Den",
+    tagline: "Loud hearts, louder playlists",
+    description:
+      "Mosh-pit romantics, vinyl collectors, and black-denim dreamers. Turn it up to eleven.",
+    emoji: "🎸",
+    gradient: ["#ff2bd6", "#5b0a3d"],
+    accent: "neon",
+    boxColor: "#ff2bd6",
+    position: { x: 0, z: 4 },
+    rotation: 0,
+  },
+  {
+    id: "fitness",
+    name: "Pulse Pump",
+    tagline: "Swole mates unite",
+    description:
+      "Pre-workout sweethearts, trail runners, and 5am-gym believers. Spotting, optional romance included.",
+    emoji: "💪",
+    gradient: ["#b6ff3a", "#0a6b3d"],
+    accent: "lime",
+    boxColor: "#b6ff3a",
+    position: { x: 6, z: 2 },
+    rotation: -18,
+  },
+  {
+    id: "artsy",
+    name: "Atelier Pod",
+    tagline: "Hearts painted in metaphors",
+    description:
+      "Ceramicists, poets, indie filmmakers, and gallery wanderers. Art is their love language.",
+    emoji: "🎨",
+    gradient: ["#00f0ff", "#9d4edd"],
+    accent: "cyan",
+    boxColor: "#00f0ff",
+    position: { x: -3, z: 7 },
+    rotation: 12,
+  },
+  {
+    id: "entrepreneur",
+    name: "Hustle Hub",
+    tagline: "Founders who swipe right on growth",
+    description:
+      "Builders, side-project obsessives, and Series-A sweet-talkers. Date your co-founder energy.",
+    emoji: "🚀",
+    gradient: ["#b6ff3a", "#1b3aff"],
+    accent: "purple",
+    boxColor: "#1b3aff",
+    position: { x: 3, z: 7 },
+    rotation: -12,
+  },
+];
+
+export const PEOPLE: Person[] = [
+  // ---------- OTAKU ----------
+  {
+    id: "p-otaku-1",
+    name: "Sora K.",
+    age: 24,
+    pronouns: "she/her",
+    location: "Seattle, WA",
+    machineId: "otaku",
+    emoji: "🌸",
+    photo:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=70",
+    bio: "I've watched every Studio Ghibli film at least four times. Looking for someone to debate FMA:B endings with me.",
+    interests: ["Anime", "Manga", "Cosplay", "Mahjong", "Matcha"],
+    hints: [
+      "Owns more manga than kitchenware 📚",
+      "Has strong opinions on subs vs dubs",
+      "Convention survival pack always ready",
+    ],
+    loveLanguage: "Quality time at 2am watch parties",
+    lookingFor: "A partner to binge whole seasons in one sitting",
+    song: " unravelling — TK from Ling Tosite Sigure",
+  },
+  {
+    id: "p-otaku-2",
+    name: "Kenji M.",
+    age: 27,
+    pronouns: "he/him",
+    location: "Austin, TX",
+    machineId: "otaku",
+    emoji: "🍙",
+    photo:
+      "https://images.unsplash.com/photo-1539571696357-5a69c0655e6c?auto=format&fit=crop&w=600&q=70",
+    bio: "Software engineer by day, mecha pilot in my heart. I will build you a Gunpla.",
+    interests: ["Mecha", "Gunpla", "Retro games", " figure-collecting", "Ramen"],
+    hints: [
+      "Built a working (kinda) LED Eva Unit-01 👾",
+      "Quote me a Gurren Lagann line and I'm yours",
+      "Knows every Gundam timeline",
+    ],
+    loveLanguage: "Building you a model kit",
+    lookingFor: "Someone who won't judge the figure shelf",
+    song: " Hacking to the Gate — いとうかなこ",
+  },
+  {
+    id: "p-otaku-3",
+    name: "Yuki T.",
+    age: 22,
+    pronouns: "they/them",
+    location: "Portland, OR",
+    machineId: "otaku",
+    emoji: "🐱",
+    photo:
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=70",
+    bio: "Cosplay crafter. Currently making a 6ft sword from cardboard. Send foam.",
+    interests: ["Cosplay", "Sewing", " foamsmithing", "Monster Hunter", "Boba"],
+    hints: [
+      "Estimating fabric cost rn 🧵",
+      "Allergic to bad wig glue (allegically)",
+      "Cats: yes. Dogs: also yes",
+    ],
+    loveLanguage: "Hand-sewn gifts of appreciation",
+    lookingFor: "Convention travel buddy + craft night host",
+    song: " Brave Shine — Aimer",
+  },
+  // ---------- ROCK ----------
+  {
+    id: "p-rock-1",
+    name: "Lex V.",
+    age: 29,
+    pronouns: "she/her",
+    location: "Brooklyn, NY",
+    machineId: "rock",
+    emoji: "🎸",
+    photo:
+      "https://images.unsplash.com/photo-1534528741775-5704a8d6a8f4?auto=format&fit=crop&w=600&q=70",
+    bio: "Bass player, vinyl addict, chronic concert-goer. I thrifted this jacket. It's mine now.",
+    interests: ["Bass", "Vinyl", "Thrifting", "Stage diving", "Espresso"],
+    hints: [
+      "Owns a '73 Fender P-Bass (named Brenda) 🎸",
+      "Has sworn at a sound engineer more than 5x",
+      "Side bangs: required",
+    ],
+    loveLanguage: "Sharing your one perfect playlist",
+    lookingFor: "Plus-one for every show this season",
+    song: " Where Is My Mind — Pixies",
+  },
+  {
+    id: "p-rock-2",
+    name: "RJ C.",
+    age: 31,
+    pronouns: "he/him",
+    location: "Manchester, UK",
+    machineId: "rock",
+    emoji: "🦇",
+    photo:
+      "https://images.unsplash.com/photo-1492561089-re4b1d6a7fb4?auto=format&fit=crop&w=600&q=70",
+    bio: "I run a DIY label out of my flat. If you don't like distortion, we will not work.",
+    interests: ["Post-punk", "Tour managing", "Tape decks", "Tattoos", "Curry"],
+    hints: [
+      "Handed you a flyer. you took it. 🙂‍↕️",
+      "Refs Joy Division at dinner",
+      "Probably offline weekends",
+    ],
+    loveLanguage: "Recording you a six-track EP",
+    lookingFor: "A partner in 4am van rides",
+    song: " Love Will Tear Us Apart — Joy Division",
+  },
+  {
+    id: "p-rock-3",
+    name: "Dee K.",
+    age: 26,
+    pronouns: "she/they",
+    location: "Las Vegas, NV",
+    machineId: "rock",
+    emoji: "⚡",
+    photo:
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=70",
+    bio: "Drummer. Loud, fast, on time. Currently in a 3-piece that's chaotic but hot.",
+    interests: ["Drums", "Dive bars", "Skateboarding", "Spicy food", "Hot sauce"],
+    hints: [
+      "Double kick pedal plays itself here 🥁",
+      "Banned from 2 practice spaces (loud)",
+      "Knows the bartender's name everywhere",
+    ],
+    loveLanguage: "Sharing the aux cord",
+    lookingFor: "A road dog & practice space plus-one",
+    song: " Everlong — Foo Fighters",
+  },
+  // ---------- FITNESS ----------
+  {
+    id: "p-fit-1",
+    name: "Maya R.",
+    age: 28,
+    pronouns: "she/her",
+    location: "Denver, CO",
+    machineId: "fitness",
+    emoji: "🏃‍♀️",
+    photo:
+      "https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&w=600&q=70",
+    bio: "Ultra-marathoner & registered dietitian. I will plan your macros and your next trail.",
+    interests: ["Trail running", "Meal prep", " Yoga", "Mountains", "Cold plunges"],
+    hints: [
+      "Track your HRV or we can't date (jk) 🫠",
+      "Has run a 100k (and cried at the finish)",
+      "No sugar. mostly. okay some.",
+    ],
+    loveLanguage: "Stretching sessions on the living room rug",
+    lookingFor: "A 5am gym accountability partner",
+    song: " Stronger — Kanye",
+  },
+  {
+    id: "p-fit-2",
+    name: "Theo D.",
+    age: 30,
+    pronouns: "he/him",
+    location: "Miami, FL",
+    machineId: "fitness",
+    emoji: "🏋️",
+    photo:
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=600&q=70",
+    bio: "CrossFit coach who swears he's chill. Quietconfidence.jpg. Mobility matters.",
+    interests: ["Olympic lifting", "Mobility", " Surfing", "Bone broth", "Sunrise pics"],
+    hints: [
+      "Will text you corrects your squat form 📹",
+      "Snatch > clean & jerk, no debate",
+      "10pm bedtime, non-negotiable",
+    ],
+    loveLanguage: "Spotting you (literally)",
+    lookingFor: "A gym buddy who eventually becomes a travel buddy",
+    song: " 'Till I Collapse — Eminem",
+  },
+  {
+    id: "p-fit-3",
+    name: "Sam P.",
+    age: 25,
+    pronouns: "they/them",
+    location: "Boulder, CO",
+    machineId: "fitness",
+    emoji: "🧗",
+    photo:
+      "https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&w=600&q=70",
+    bio: "Bouldering 8 years, Parkour 2 years. I'll belay you into my heart.",
+    interests: ["Climbing", " Parkour", "Hiking", "Foraging", "Plant-based"],
+    hints: [
+      "Sends v8, falls off v3 🧗",
+      "Knows every crag within 3 hours",
+      "Buys chalk by the kilo",
+    ],
+    loveLanguage: "Long belay conversations",
+    lookingFor: "Climbing partner, food-partner, life partner?",
+    song: " Lone Digger — Caravan Palace",
+  },
+  // ---------- ARTSY ----------
+  {
+    id: "p-art-1",
+    name: "Iris L.",
+    age: 27,
+    pronouns: "she/her",
+    location: "Mexico City, MX",
+    machineId: "artsy",
+    emoji: "🎨",
+    photo:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=600&q=70",
+    bio: "Ceramicist & gallery hopper. Everything in my home is handmade & slightly uneven.",
+    interests: ["Ceramics", "Figure drawing", " Gallery openings", "Natural wine", "Lino printing"],
+    hints: [
+      "Will critique your mug handle 🫖",
+      "Knows every Biennale since '05",
+      "Fingerprints everywhere are clay",
+    ],
+    loveLanguage: "Throwing you a small bowl with your initial",
+    lookingFor: "Museum date that turns into a coffee that turns into forever",
+    song: " Cherry-coloured Funk — Cocteau Twins",
+  },
+  {
+    id: "p-art-2",
+    name: "Noah F.",
+    age: 33,
+    pronouns: "he/they",
+    location: "Berlin, DE",
+    machineId: "artsy",
+    emoji: "🎞️",
+    photo:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=70",
+    bio: "Indy filmmaker, terrible at bios (ironic for a writer). Let's overshare over espresso.",
+    interests: ["Film photography", "Super 8", " journaling", "Nitro cold brew", "Tarot"],
+    hints: [
+      "Carries a Super 8 to every date 🎞️",
+      "Will ask about your Saturn return",
+      "Notebook: full. Hearts: available.",
+    ],
+    loveLanguage: "Shooting & developing a film of you",
+    lookingFor: "A muse and co-conspirator",
+    song: " Lover, You Should've Come Over — Jeff Buckley",
+  },
+  {
+    id: "p-art-3",
+    name: "Paz O.",
+    age: 24,
+    pronouns: "she/her",
+    location: "Lisbon, PT",
+    machineId: "artsy",
+    emoji: "✍️",
+    photo:
+      "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?auto=format&fit=crop&w=600&q=70",
+    bio: "Poet & risograph zine maker. I print small books of feelings. Ask for one.",
+    interests: ["Poetry", "Risograph", " Indie bookstores", "Tinned fish", "Long walks"],
+    hints: [
+      "Will text you back in sonnets 📜",
+      "Knows the best sardines in town",
+      "Self-publishes, no apologies",
+    ],
+    loveLanguage: "Handwriting you letters",
+    lookingFor: "A reader who'll dog-ear my pages",
+    song: " Hallelujah — Jeff Buckley",
+  },
+  // ---------- ENTREPRENEUR ----------
+  {
+    id: "p-ent-1",
+    name: "Aria S.",
+    age: 29,
+    pronouns: "she/her",
+    location: "San Francisco, CA",
+    machineId: "entrepreneur",
+    emoji: "🚀",
+    photo:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=70",
+    bio: "Ex-FAANG, now bootstrap-pilled. Pre-seed budget includes DateNight line item.",
+    interests: [" Bootstrapping", "Notion dashboards", "Coffee walks", "SaaS", "Founders' dinners"],
+    hints: [
+      "Calendar-blocks romance ⏰",
+      "Will reply to your DM during a standup",
+      "Revenue > vibes, but vibes are vibes",
+    ],
+    loveLanguage: "Calendar invites titled 'Sync 1:1 ❤️'",
+    lookingFor: "A co-founder energy partner who's also spontaneous",
+    song: " Lose Yourself — Eminem",
+  },
+  {
+    id: "p-ent-2",
+    name: "Marcus B.",
+    age: 35,
+    pronouns: "he/him",
+    location: "Austin, TX",
+    machineId: "entrepreneur",
+    emoji: "📈",
+    photo:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=70",
+    bio: "Exited twice (once nicely). Now building dev tools and an espresso habit.",
+    interests: [" Dev tools", "Angel investing", "Habit-tracking", "Peloton", "Book notes"],
+    hints: [
+      "Has Notion for everything personal 📊",
+      "Habit stack, cold shower, journal — daily",
+      "Will challenge your dating funnel",
+    ],
+    loveLanguage: "Tiny, well-designed gift cards",
+    lookingFor: "A partner with their own north star",
+    song: " The Score — Big Sean",
+  },
+  {
+    id: "p-ent-3",
+    name: "Lena W.",
+    age: 26,
+    pronouns: "she/they",
+    location: "Singapore",
+    machineId: "entrepreneur",
+    emoji: "⚡",
+    photo:
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=70",
+    bio: "Building a climate startup in a co-working space full of plants. Will pitch you over noodles.",
+    interests: [" Climate tech", "Trail runs", "Book clubs", "Edtech", "Hawker centers"],
+    hints: [
+      "Pitch deck attached to every google slide 🙂‍↕️",
+      "MRR, ARPU, LTV in normal conversation",
+      "Carbon footprint per date: tiny",
+    ],
+    loveLanguage: "Forwarding you long, well-organized Notion love notes",
+    lookingFor: "An accountability & ambition partner",
+    song: " Work — Rihanna",
+  },
+];
+
+// Build capsules deterministically from people so SSR/CSR match.
+export const CAPSULES: Capsule[] = PEOPLE.map((p, i) => {
+  const machine = MACHINES.find((m) => m.id === p.machineId)!;
+  const rarityByHash = ["common", "rare", "legendary"][i % 3] as Capsule["rarity"];
+  return {
+    id: `cap-${p.id}`,
+    machineId: p.machineId,
+    personId: p.id,
+    color: machine.boxColor,
+    rarity: rarityByHash,
+  };
+});
+
+export function getMachine(id: MachineId): VendingMachine | undefined {
+  return MACHINES.find((m) => m.id === id);
+}
+
+export function getPerson(id: string): Person | undefined {
+  return PEOPLE.find((p) => p.id === id);
+}
+
+export function getCapsulesForMachine(id: MachineId): Capsule[] {
+  return CAPSULES.filter((c) => c.machineId === id);
+}
