@@ -4,31 +4,27 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Sparkles,
-  Boxes,
   ArrowRight,
   Coins,
   Heart,
   ShieldCheck,
   Dices,
+  DoorOpen,
 } from "lucide-react";
 import { MACHINES } from "@/data/mock-data";
 import { NeonButton } from "@/components/NeonButton";
+import { VendingMachineCab } from "@/components/VendingMachineCab";
 
 const FEATURES = [
   {
-    icon: Boxes,
-    title: "Themed vending machines",
-    body: "Otaku, rock, fitness, artsy, hustle. Walk the lobby, pick a vibe.",
-  },
-  {
     icon: Dices,
-    title: "Random capsule reveal",
-    body: "Crack open a capsule and meet a stranger who matches your scene.",
+    title: "Themed vending machines",
+    body: "Otaku, rock, fitness, artsy, hustle. Walk the neon street, pick a vibe.",
   },
   {
     icon: Coins,
-    title: "3 free credits",
-    body: "Every new member starts with 3 free opens. Earn more, or top up later.",
+    title: "10 free credits",
+    body: "Demo accounts start with 10 credits pre-loaded. Pull capsules right away.",
   },
   {
     icon: ShieldCheck,
@@ -41,12 +37,12 @@ export default function LandingPage() {
   return (
     <div className="relative overflow-hidden">
       {/* animated grid bg */}
-      <div className="pointer-events-none absolute inset-0 cyber-grid animate-gridmove opacity-40" />
+      <div className="pointer-events-none absolute inset-0 cyber-grid animate-gridmove opacity-30" />
       <div className="pointer-events-none absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-cyber-neon/30 blur-[120px]" />
       <div className="pointer-events-none absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-cyber-cyan/30 blur-[120px]" />
 
-      {/* Hero */}
-      <section className="relative mx-auto max-w-6xl px-4 pt-20 pb-24 sm:pt-28 sm:pb-32 text-center">
+      {/* Hero: cinematic street entrance */}
+      <section className="relative mx-auto max-w-6xl px-4 pt-16 pb-24 sm:pt-24 text-center">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -54,7 +50,7 @@ export default function LandingPage() {
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs font-medium text-cyber-lime mb-6"
         >
           <Sparkles className="w-3.5 h-3.5" />
-          A dating playground from the year 2099
+          渋谷 · A dating arcade from the year 2099
         </motion.div>
 
         <motion.h1
@@ -63,10 +59,10 @@ export default function LandingPage() {
           transition={{ duration: 0.6, delay: 0.05 }}
           className="font-display font-bold text-4xl sm:text-6xl md:text-7xl leading-[1.05] tracking-tight"
         >
-          Find your match
+          Capsule Dating:
           <br />
           <span className="bg-gradient-to-r from-cyber-neon via-cyber-purple to-cyber-cyan bg-clip-text text-transparent">
-            in a vending machine.
+            ガチャ恋の街
           </span>
         </motion.h1>
 
@@ -76,9 +72,9 @@ export default function LandingPage() {
           transition={{ duration: 0.6, delay: 0.12 }}
           className="mt-6 max-w-2xl mx-auto text-white/70 text-base sm:text-lg"
         >
-          Step into a neon-soaked lobby, wander past themed vending machines,
-          and crack open a person-capsule. Personality first, photo later.
-          Romance, but make it arcade.
+          Step into a neon-soaked Tokyo backstreet of glowing vending machines.
+          Drop a coin, crank the dial, crack open a person-capsule. Personality
+          first — photo later. Romance, but make it arcade.
         </motion.p>
 
         <motion.div
@@ -88,44 +84,48 @@ export default function LandingPage() {
           className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <NeonButton href="/lobby" className="px-8 py-3.5 text-base">
-            Enter the lobby <ArrowRight className="w-4 h-4" />
+            <DoorOpen className="w-4 h-4" /> Enter the arcade
           </NeonButton>
           <NeonButton href="/register" variant="ghost" className="px-8 py-3.5 text-base">
             Create a free account
           </NeonButton>
         </motion.div>
 
-        {/* Hero art: floating capsules */}
+        {/* Cinematic street row of machines */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-          className="mt-16 flex justify-center gap-3 sm:gap-6"
+          initial={{ opacity: 0, scale: 0.92, y: 40 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.3 }}
+          className="relative mt-20 mb-6"
         >
-          {MACHINES.map((m, i) => (
-            <motion.div
-              key={m.id}
-              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full relative shadow-neon-cyan animate-float"
-              style={{
-                background: `linear-gradient(135deg, ${m.gradient[0]}, ${m.gradient[1]})`,
-                animationDelay: `${i * 0.6}s`,
-              }}
-              title={m.name}
-            >
-              <div className="absolute inset-0 grid place-items-center text-lg sm:text-2xl">
-                {m.emoji}
-              </div>
-            </motion.div>
-          ))}
+          <div className="absolute inset-x-0 -bottom-6 h-24 cyber-floor opacity-50 [mask-image:linear-gradient(to_top,black,transparent)]" />
+          <div className="relative flex items-end justify-center gap-2 sm:gap-6 overflow-x-auto no-scrollbar pb-6">
+            {MACHINES.map((m, i) => (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, y: 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.5 + i * 0.12 }}
+                className="shrink-0"
+              >
+                <Link href={`/machine/${m.id}`}>
+                  <VendingMachineCab machine={m} size="sm" />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-white/40 tracking-widest">
+            ← scroll the street →
+          </p>
         </motion.div>
       </section>
 
       {/* How it works */}
-      <section className="relative mx-auto max-w-6xl px-4 py-12 sm:py-16">
+      <section className="relative mx-auto max-w-6xl px-4 py-12">
         <h2 className="text-center font-display font-bold text-2xl sm:text-3xl mb-10">
-          How it works
+          How the arcade works
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {FEATURES.map((f, i) => (
             <motion.div
               key={f.title}
@@ -138,54 +138,6 @@ export default function LandingPage() {
               <f.icon className="w-7 h-7 text-cyber-neon mb-3" />
               <h3 className="font-semibold mb-1">{f.title}</h3>
               <p className="text-sm text-white/60">{f.body}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Machines preview */}
-      <section className="relative mx-auto max-w-6xl px-4 py-12 sm:py-16">
-        <div className="flex items-end justify-between mb-8">
-          <h2 className="font-display font-bold text-2xl sm:text-3xl">
-            Pick your scene
-          </h2>
-          <Link
-            href="/lobby"
-            className="text-sm text-cyber-cyan hover:underline flex items-center gap-1"
-          >
-            See them in 3D <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-          {MACHINES.map((m, i) => (
-            <motion.div
-              key={m.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.06 }}
-            >
-              <Link
-                href={`/machine/${m.id}`}
-                className="block glass rounded-2xl p-4 h-full hover:-translate-y-1 hover:shadow-neon transition-all"
-                style={{
-                  borderColor: "rgba(255,255,255,0.08)",
-                }}
-              >
-                <div
-                  className="w-10 h-10 rounded-xl mb-3 grid place-items-center text-xl"
-                  style={{
-                    background: `linear-gradient(135deg, ${m.gradient[0]}, ${m.gradient[1]})`,
-                  }}
-                >
-                  {m.emoji}
-                </div>
-                <div className="font-semibold text-sm">{m.name}</div>
-                <div className="text-xs text-white/50 mt-0.5 leading-snug">
-                  {m.tagline}
-                </div>
-              </Link>
             </motion.div>
           ))}
         </div>
@@ -205,10 +157,11 @@ export default function LandingPage() {
             Your next someone is in a capsule.
           </h2>
           <p className="text-white/60 mb-6 max-w-xl mx-auto">
-            Spin up a personality in five clicks. Start free, stay weird.
+            Drop in a coin, crank the dial, let fate roll. You&apos;re demo-logged-in —
+            10 credits are waiting.
           </p>
           <NeonButton href="/lobby" variant="cyan" className="px-8 py-3.5 text-base">
-            Step into the lobby <ArrowRight className="w-4 h-4" />
+            Walk the neon street <ArrowRight className="w-4 h-4" />
           </NeonButton>
         </motion.div>
       </section>

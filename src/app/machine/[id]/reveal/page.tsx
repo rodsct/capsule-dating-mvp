@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { notFound, useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { useParams, useRouter, notFound } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   Coins,
-  Lock,
   Sparkles,
   CheckCircle2,
   Heart,
@@ -15,18 +14,18 @@ import {
   Gift,
 } from "lucide-react";
 import { getMachine, getCapsulesForMachine, getPerson } from "@/data/mock-data";
-import { rarityColor, rarityLabel, pickRandom } from "@/lib/utils";
+import { rarityColor, pickRandom } from "@/lib/utils";
+import { MACHINES } from "@/data/mock-data";
 import { useAuth } from "@/lib/auth";
 import type { MachineId, Person } from "@/lib/types";
 import { NeonButton } from "@/components/NeonButton";
 
 type Stage = "prompt" | "spinning" | "hints" | "photo";
 
-export default function RevealPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+const REEL_EMOJIS = ["🌸", "🎸", "💪", "🎨", "🚀", "💖", "🎲", "⭐"];
+
+export default function RevealPage() {
+  const params = useParams<{ id: string }>();
   const router = useRouter();
   const { user, ready, spendCredit, recordMatch } = useAuth();
 
@@ -34,12 +33,23 @@ export default function RevealPage({
   const [person, setPerson] = useState<Person | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(false);
+  const [dropped, setDropped] = useState(false);
+  const [reelFinal, setReelFinal] = useState<string[]>(["?", "?", "?"]);
 
   const machine = getMachine(params.id as MachineId);
   const credits = user?.credits ?? 0;
   const capsules = useMemo(
     () => (machine ? getCapsulesForMachine(machine.id) : []),
     [machine],
+  );
+
+  // precompute some random reel stops for flavor
+  const stopEmojis = useMemo(
+    () =>
+      Array.from({ length: 3 }, (_, i) =>
+        pickRandom(REEL_EMOJIS, (i + 1) * 7),
+      ),
+    [],
   );
 
   if (!machine) return notFound();
@@ -51,7 +61,9 @@ export default function RevealPage({
       return;
     }
     if (credits <= 0) {
-      setError("You're out of credits. New accounts start with 3 free — log out and make a friend?");
+      setError(
+        "You're out of credits. Top up on your profile or log out and make a friend?",
+      );
       return;
     }
     const ok = spendCredit();
@@ -63,8 +75,21 @@ export default function RevealPage({
     setPerson(pick);
     recordMatch(pick.id);
     setUnlocked(false);
+    setDropped(false);
+    setReelFinal(["?", "?", "?"]);
     setStage("spinning");
-    setTimeout(() => setStage("hints"), 1800);
+    // stagger reel stops
+    stopEmojis.forEach((e, i) =>
+      setTimeout(() => setReelFinal((r) => {
+        const n = [...r];
+        n[i] = e;
+        return n;
+      }), 500 + i * 450),
+    );
+    // capsule drops at end of spin
+    setTimeout(() => setDropped(true), 500 + stopEmojis.length * 450 + 250);
+    // move to hints
+    setTimeout(() => setStage("hints"), 500 + stopEmojis.length * 450 + 1400);
   };
 
   const unlockPhoto = () => {
@@ -83,9 +108,9 @@ export default function RevealPage({
   return (
     <div className="relative min-h-[80vh]">
       <div
-        className="pointer-events-none absolute inset-0 opacity-30"
+        className="pointer-events-none absolute inset-0 opacity-40"
         style={{
-          background: `radial-gradient(700px 360px at 50% -10%, ${machine.boxColor}55, transparent 70%)`,
+          background: `radial-gradient(800px 420px at 50% -10%, ${machine.boxColor}55, transparent 70%)`,
         }}
       />
       <div className="relative mx-auto max-w-3xl px-4 py-8">
@@ -104,32 +129,28 @@ export default function RevealPage({
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="text-center py-16"
+              className="text-center py-12"
             >
-              <div
-                className="w-24 h-32 rounded-full mx-auto mb-6 relative overflow-hidden shadow-neon animate-float"
-                style={{
-                  background: `linear-gradient(135deg, ${machine.boxColor}, ${machine.gradient[1]})`,
-                }}
-              >
-                <div className="absolute inset-x-0 top-1/2 h-px bg-white/50" />
-                <div className="absolute inset-0 grid place-items-center text-4xl">
-                  {machine.emoji}
-                </div>
-              </div>
-              <h1 className="font-display font-bold text-2xl sm:text-3xl mb-3">
-                Ready to pull a capsule?
+              <SlotMachine
+                machine={machine}
+                reels={["?", "?", "?"]}
+                spinning={false}
+                dropped={false}
+                dropEmoji={machine.emoji}
+              />
+              <h1 className="font-display font-bold text-2xl sm:text-3xl mt-8 mb-3">
+                Drop a coin &amp; pull?
               </h1>
               <p className="text-white/60 mb-6 max-w-md mx-auto text-sm">
-                One credit unlocks a randomized {machine.name} profile. You&apos;ll
-                see personality hints first — reveal the photo when you&apos;re
-                vibing.
+                One credit cranks the dial, spins the reels, and dispenses a
+                random {machine.name} capsule. You&apos;ll see personality hints
+                first — reveal the photo when you&apos;re vibing.
               </p>
 
               <div className="flex items-center justify-center gap-3 mb-6 text-xs">
                 <span className="glass px-3 py-1.5 rounded-full flex items-center gap-1.5">
                   <Coins className="w-3.5 h-3.5 text-cyber-lime" />
-                  Cost: 1 credit
+                  Cost: ¥{machine.price} (1 credit)
                 </span>
                 <span className="glass px-3 py-1.5 rounded-full">
                   You have:{" "}
@@ -144,7 +165,7 @@ export default function RevealPage({
               )}
 
               <NeonButton onClick={startReveal} className="px-8 py-3.5 text-base">
-                <Sparkles className="w-4 h-4" /> Pull a capsule
+                <Sparkles className="w-4 h-4" /> Insert ¥{machine.price} &amp; pull
               </NeonButton>
 
               {!user && (
@@ -166,28 +187,17 @@ export default function RevealPage({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-center py-24"
+              className="text-center py-12"
             >
-              <motion.div
-                animate={{ rotateY: [0, 360], scale: [1, 1.08, 1] }}
-                transition={{ duration: 0.6, repeat: Infinity, ease: "linear" }}
-                className="w-32 h-44 rounded-full mx-auto relative overflow-hidden shadow-neon"
-                style={{
-                  background: `linear-gradient(135deg, ${machine.boxColor}, ${machine.gradient[1]})`,
-                }}
-              >
-                <div className="absolute inset-x-0 top-1/2 h-px bg-white/60" />
-                <div className="absolute inset-0 grid place-items-center text-5xl">
-                  <motion.span
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                  >
-                    {machine.emoji}
-                  </motion.span>
-                </div>
-              </motion.div>
+              <SlotMachine
+                machine={machine}
+                reels={reelFinal}
+                spinning
+                dropped={dropped}
+                dropEmoji={person?.emoji ?? machine.emoji}
+              />
               <p className="mt-8 neon-text animate-flicker font-display font-bold text-xl">
-                Dispensing your capsule…
+                {dropped ? "Cracking open…" : "Spinning the reels…"}
               </p>
             </motion.div>
           )}
@@ -205,14 +215,14 @@ export default function RevealPage({
                   You pulled a capsule from {machine.name}
                 </span>
                 <h1 className="mt-2 font-display font-bold text-3xl">
-                  {person.emoji} “{person.name.split(" ")[0]}”, {person.age}
+                  {person.emoji} {person.name.split(" ")[0]}, {person.age}
                 </h1>
                 <p className="text-white/50 text-sm mt-1">
                   {person.pronouns} · {person.location}
                 </p>
               </div>
 
-              <div className="glass rounded-2xl p-6 mb-6">
+              <div className="glass rounded-2xl p-6 mb-6 scanlines">
                 <h2 className="text-sm font-semibold text-cyber-neon mb-4 flex items-center gap-2">
                   <Sparkles className="w-4 h-4" /> Personality hints
                 </h2>
@@ -255,12 +265,13 @@ export default function RevealPage({
                   <NeonButton onClick={unlockPhoto} variant="cyan">
                     <Eye className="w-4 h-4" /> Reveal photo (mutual interest)
                   </NeonButton>
-                  <Link
-                    href={`/machine/${machine.id}/reveal`}
+                  <button
+                    type="button"
+                    onClick={startReveal}
                     className="inline-flex items-center justify-center gap-2 font-semibold rounded-full px-6 py-3 text-sm glass hover:bg-white/10"
                   >
                     Pull again →
-                  </Link>
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -278,7 +289,7 @@ export default function RevealPage({
                   initial={{ scale: 0.9, filter: "blur(18px)" }}
                   animate={{ scale: 1, filter: "blur(0px)" }}
                   transition={{ duration: 0.7 }}
-                  className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-neon scanlines"
+                  className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-neon scanlines border border-white/10"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -315,13 +326,13 @@ export default function RevealPage({
                     <NeonButton href={`/profile/${person.id}`} variant="neon">
                       <Heart className="w-4 h-4" /> View full profile
                     </NeonButton>
-                    <NeonButton
-                      href="/profile/me"
-                      variant="ghost"
+                    <button
+                      type="button"
                       onClick={() => router.push("/profile/me")}
+                      className="inline-flex items-center justify-center gap-2 font-semibold rounded-full px-6 py-3 text-sm glass hover:bg-white/10"
                     >
                       <Gift className="w-4 h-4" /> Saved to your matches
-                    </NeonButton>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -340,6 +351,147 @@ function Info({ label, value }: { label: string; value: string }) {
         {label}
       </dt>
       <dd className="text-white/90">{value}</dd>
+    </div>
+  );
+}
+
+/** A small slot-machine + dispense bin visual. */
+function SlotMachine({
+  machine,
+  reels,
+  spinning,
+  dropped,
+  dropEmoji,
+}: {
+  machine: (typeof MACHINES)[number];
+  reels: string[];
+  spinning: boolean;
+  dropped: boolean;
+  dropEmoji: string;
+}) {
+  const [g0, g1] = machine.gradient;
+  return (
+    <div className="relative mx-auto" style={{ width: 300 }}>
+      {/* stand glow */}
+      <div
+        className="absolute -bottom-6 left-1/2 -translate-x-1/2 blur-xl rounded-full"
+        style={{ width: 220, height: 30, background: machine.signColor, opacity: 0.5 }}
+      />
+      <div className="vm-chrome rounded-2xl p-4 pt-3 relative" style={{ width: 300 }}>
+        {/* marquee */}
+        <div
+          className="vm-sign h-10 mb-3 grid place-items-center text-lg font-display font-bold animate-signpulse"
+          style={
+            {
+              "--sign-ring": `${machine.signColor}aa`,
+              "--sign-glow": `${machine.signColor}cc`,
+              color: machine.signColor,
+            } as React.CSSProperties
+          }
+        >
+          {machine.kanji} · {machine.name.toUpperCase()}
+        </div>
+
+        {/* 3 reels */}
+        <div className="vm-glass relative rounded-md p-3 h-32 flex items-center justify-center gap-3">
+          <div
+            className="absolute inset-0"
+            style={{ background: `linear-gradient(180deg, ${g0}22, ${g1}11)` }}
+          />
+          {reels.map((r, i) => (
+            <Reel key={i} symbol={r} spinning={spinning} accent={machine.signColor} />
+          ))}
+          {/* center payline */}
+          <div
+            className="absolute left-2 right-2 h-px"
+            style={{ top: "50%", background: machine.signColor, opacity: 0.5 }}
+          />
+        </div>
+
+        {/* coin slot line */}
+        <div className="flex items-center justify-between mt-3 mb-2">
+          <div className="vm-coin-slot h-1.5 w-16 rounded-sm" />
+          <span className="text-[9px] text-cyber-gold/80 tracking-widest">
+            ¥{machine.price}
+          </span>
+          <div className="vm-button rounded-full" style={
+            {
+              "--btn-hi": "#ffe9f6",
+              "--btn-lo": machine.signColor,
+              "--btn-glow": `${machine.signColor}cc`,
+              width: 18,
+              height: 18,
+            } as React.CSSProperties
+          } />
+        </div>
+
+        {/* dispense bin */}
+        <div className="vm-bin relative h-24 rounded-md overflow-hidden grid place-items-center">
+          {!dropped ? (
+            <span className="text-[9px] text-white/30 tracking-widest">
+              ▲ 自動販売 WAITING ▲
+            </span>
+          ) : (
+            <motion.div
+              className="vm-capsule relative rounded-full grid place-items-center text-lg"
+              onAnimationComplete={() => {}}
+              style={
+                {
+                  "--cap-top": machine.boxColor,
+                  "--cap-bot": g1,
+                  "--cap-glow": `${rarityColor("legendary")}66`,
+                  width: 64,
+                  height: 76,
+                  borderRadius: 999,
+                } as React.CSSProperties
+              }
+            >
+              <span className="animate-capsule-drop">{dropEmoji}</span>
+            </motion.div>
+          )}
+          <span className="absolute bottom-1 text-[8px] text-white/30 tracking-widest">
+            取出口 EXIT
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Reel({
+  symbol,
+  spinning,
+  accent,
+}: {
+  symbol: string;
+  spinning: boolean;
+  accent: string;
+}) {
+  return (
+    <div
+      className="relative w-16 h-16 rounded-md bg-black/70 border overflow-hidden grid place-items-center text-3xl"
+      style={{ borderColor: `${accent}55`, boxShadow: `inset 0 0 12px ${accent}33` }}
+    >
+      {spinning ? (
+        <motion.div
+          className="absolute inset-x-0 flex flex-col items-center"
+          animate={{ y: [0, -100] }}
+          transition={{ duration: 0.18, repeat: Infinity, ease: "linear" }}
+        >
+          {REEL_EMOJIS.concat(REEL_EMOJIS).map((e, i) => (
+            <span key={i} className="h-16 leading-[4rem] text-center">
+              {e}
+            </span>
+          ))}
+        </motion.div>
+      ) : (
+        <span
+          className="animate-signpulse"
+          style={{ filter: `drop-shadow(0 0 6px ${accent}aa)` }}
+        >
+          {symbol}
+        </span>
+      )}
     </div>
   );
 }

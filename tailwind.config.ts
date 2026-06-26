@@ -9,13 +9,14 @@ const config: Config = {
     extend: {
       colors: {
         cyber: {
-          bg: "#0a0b1e",
-          panel: "#12132b",
+          bg: "#05060f",
+          panel: "#0c0e24",
           neon: "#ff2bd6",
           cyan: "#00f0ff",
           purple: "#9d4edd",
           lime: "#b6ff3a",
           pink: "#ff7ad9",
+          gold: "#ffd166",
         },
       },
       fontFamily: {
@@ -25,6 +26,7 @@ const config: Config = {
         neon: "0 0 10px rgba(255,43,214,0.7), 0 0 30px rgba(255,43,214,0.4)",
         "neon-cyan": "0 0 10px rgba(0,240,255,0.7), 0 0 30px rgba(0,240,255,0.4)",
         "neon-purple": "0 0 10px rgba(157,78,221,0.7), 0 0 30px rgba(157,78,221,0.4)",
+        "neon-lime": "0 0 10px rgba(182,255,58,0.7), 0 0 30px rgba(182,255,58,0.4)",
       },
       keyframes: {
         float: {
@@ -37,13 +39,18 @@ const config: Config = {
         },
         gridmove: {
           "0%": { transform: "translateY(0)" },
-          "100%": { transform: "translateY(40px)" },
+          "100%": { transform: "translateY(44px)" },
+        },
+        signpulse: {
+          "0%,100%": { filter: "brightness(1) drop-shadow(0 0 6px var(--sign-glow, #ff2bd6))" },
+          "50%": { filter: "brightness(1.35) drop-shadow(0 0 14px var(--sign-glow, #ff2bd6))" },
         },
       },
       animation: {
         float: "float 6s ease-in-out infinite",
         flicker: "flicker 3s linear infinite",
         gridmove: "gridmove 2s linear infinite",
+        signpulse: "signpulse 2.4s ease-in-out infinite",
       },
     },
   },

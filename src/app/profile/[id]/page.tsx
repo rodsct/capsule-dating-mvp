@@ -1,21 +1,25 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
+import { useParams, notFound } from "next/navigation";
+import { motion } from "framer-motion";
 import { ArrowLeft, Heart, Music2, MapPin, Sparkles } from "lucide-react";
-import { getPerson } from "@/data/mock-data";
-import { notFound } from "next/navigation";
+import { getPerson, getMachine } from "@/data/mock-data";
 
-export default function ProfilePage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function ProfilePage() {
+  const params = useParams<{ id: string }>();
   const person = getPerson(params.id);
   if (!person) return notFound();
+  const machine = getMachine(person.machineId);
 
   return (
     <div className="relative">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-30"
+        style={{
+          background: `radial-gradient(700px 400px at 50% -10%, ${machine?.boxColor ?? "#ff2bd6"}55, transparent 70%)`,
+        }}
+      />
       <div className="relative mx-auto max-w-4xl px-4 py-8">
         <Link
           href="/lobby"
@@ -30,13 +34,24 @@ export default function ProfilePage({
           transition={{ duration: 0.5 }}
           className="grid sm:grid-cols-[280px_1fr] gap-6"
         >
-          <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-neon scanlines">
+          <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-neon scanlines border border-white/10">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={person.photo}
               alt={person.name}
               className="w-full h-full object-cover"
             />
+            {machine && (
+              <span
+                className="absolute top-3 left-3 px-2 py-1 rounded-md text-[10px] font-bold tracking-widest"
+                style={{
+                  background: `${machine.signColor}22`,
+                  color: machine.signColor,
+                }}
+              >
+                {machine.kanji} · {machine.name}
+              </span>
+            )}
           </div>
 
           <div>

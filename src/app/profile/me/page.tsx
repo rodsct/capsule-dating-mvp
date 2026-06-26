@@ -22,11 +22,10 @@ export default function MyProfilePage() {
     return (
       <div className="mx-auto max-w-md px-4 py-24 text-center">
         <User className="w-10 h-10 text-cyber-neon mx-auto mb-4" />
-        <h1 className="font-display font-bold text-2xl mb-3">
-          Not logged in
-        </h1>
+        <h1 className="font-display font-bold text-2xl mb-3">Not logged in</h1>
         <p className="text-white/60 text-sm mb-6">
-          Create an account to start collecting capsule pulls.
+          A demo account is auto-created on first visit, but you can log out and
+          make your own capsule collector.
         </p>
         <div className="flex justify-center gap-3">
           <NeonButton href="/register">Join free</NeonButton>
@@ -38,6 +37,8 @@ export default function MyProfilePage() {
     );
   }
 
+  const isDemo = user.username.startsWith("demo_");
+
   return (
     <div className="relative mx-auto max-w-3xl px-4 py-10">
       <motion.div
@@ -46,17 +47,22 @@ export default function MyProfilePage() {
         className="glass rounded-3xl p-6 sm:p-8 relative scanlines"
       >
         <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <div className="text-xs uppercase tracking-widest text-cyber-neon mb-1 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" /> Your capsule account
+<div>
+              <span className="text-xs uppercase tracking-widest text-cyber-neon mb-1 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" /> Your capsule account
+                {isDemo && (
+                  <span className="ml-2 px-1.5 py-0.5 rounded text-[9px] bg-cyber-lime/20 text-cyber-lime font-bold tracking-widest">
+                    DEMO MODE
+                  </span>
+                )}
+              </span>
+              <h1 className="font-display font-bold text-2xl sm:text-3xl">
+                @{user.username}
+              </h1>
+              <p className="text-white/50 text-xs mt-1">
+                Joined {new Date(user.createdAt).toLocaleDateString()}
+              </p>
             </div>
-            <h1 className="font-display font-bold text-2xl sm:text-3xl">
-              @{user.username}
-            </h1>
-            <p className="text-white/50 text-xs mt-1">
-              Joined {new Date(user.createdAt).toLocaleDateString()}
-            </p>
-          </div>
           <div className="flex items-center gap-2">
             <div className="px-3 py-2 rounded-full glass border border-cyber-lime/40 text-cyber-lime text-sm font-semibold flex items-center gap-1.5">
               <Coins className="w-4 h-4" /> {user.credits} credits
@@ -72,8 +78,8 @@ export default function MyProfilePage() {
 
         <div className="mt-6 p-4 rounded-2xl bg-white/5 border border-white/10">
           <p className="text-sm text-white/70 mb-3">
-            Out of credits? In this MVP you can grab a top-up to keep pulling
-            (mock — no payment).
+            Out of coins? In this MVP you can grab a top-up to keep pulling at the
+            vending machines (mock — no payment).
           </p>
           <div className="flex gap-2">
             {[3, 5, 10].map((n) => (

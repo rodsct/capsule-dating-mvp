@@ -8,6 +8,10 @@ export type MachineId =
 export interface VendingMachine {
   id: MachineId;
   name: string;
+  /** Japanese kanji shown on the neon sign */
+  kanji: string;
+  /** short romaji label under the kanji */
+  romaji: string;
   tagline: string;
   description: string;
   emoji: string;
@@ -16,6 +20,10 @@ export interface VendingMachine {
   /** Neon accent color (tailwind class fragment) */
   accent: "neon" | "cyan" | "purple" | "lime" | "pink";
   boxColor: string; // hex for capsule boxes
+  /** hex for the neon sign ring/glow */
+  signColor: string;
+  /** price in yen shown on the coin slot */
+  price: number;
   position: { x: number; z: number }; // 3D-ish position in lobby
   rotation: number; // y rotation in lobby
 }
@@ -28,7 +36,7 @@ export interface Person {
   location: string;
   machineId: MachineId;
   emoji: string;
-  photo: string; // url (unsplash)
+  photo: string; // url (placeholder avatar)
   bio: string;
   interests: string[];
   hints: string[]; // personality/interest hints revealed before photo

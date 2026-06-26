@@ -39,15 +39,13 @@ function RegisterForm() {
             Capsule Dating
           </span>
         </div>
-        <h1 className="font-display font-bold text-2xl mb-1">
-          Join the arcade
-        </h1>
+        <h1 className="font-display font-bold text-2xl mb-1">Join the arcade</h1>
         <p className="text-white/60 text-sm mb-4">
           Pick a username to start. New members get{" "}
           <span className="text-cyber-lime font-semibold inline-flex items-center gap-1">
             <Coins className="w-3.5 h-3.5" /> 3 free credits
           </span>
-          .
+          . (A demo account with 10 is auto-loaded on first visit.)
         </p>
 
         <form onSubmit={submit} className="space-y-4">
