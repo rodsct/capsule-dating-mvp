@@ -1,65 +1,8 @@
-export function classNames(
-  ...parts: Array<string | false | null | undefined>
-): string {
-  return parts.filter(Boolean).join(" ");
-}
+import type { CapsuleProfile, MachineId } from "@/lib/types";
 
-export function pickRandom<T>(arr: T[], seed?: number): T {
-  if (seed !== undefined) {
-    return arr[seed % arr.length];
-  }
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-export function rarityColor(rarity: "common" | "rare" | "legendary"): string {
-  switch (rarity) {
-    case "legendary":
-      return "#b6ff3a";
-    case "rare":
-      return "#00f0ff";
-    default:
-      return "#ff7ad9";
-  }
-}
-
-export function rarityLabel(rarity: "common" | "rare" | "legendary"): string {
-  switch (rarity) {
-    case "legendary":
-      return "Legendaria";
-    case "rare":
-      return "Rara";
-    default:
-      return "Común";
-  }
-}
-
-/** Format a price in Mexican pesos (MXN) for display, e.g. 29 -> "$29 MXN". */
+/** Format a price in Mexican pesos (MXN), e.g. 29 -> "$29 MXN". */
 export function formatMXN(price: number): string {
   return `$${price} MXN`;
-}
-
-const AVATAR_STYLES = [
-  "adventurer",
-  "big-smile",
-  "fun-emoji",
-  "lorelei",
-  "micah",
-  "notionists",
-  "personas",
-  "thumbs",
-  "bottts",
-] as const;
-
-/** Deterministic Dicebear avatar URL from a seed string. */
-export function avatarUrl(
-  seed: string,
-  styleIndex = 0,
-  background = "ff2bd6,00f0ff",
-): string {
-  const style = AVATAR_STYLES[styleIndex % AVATAR_STYLES.length];
-  return `https://api.dicebear.com/9.x/${style}/png?seed=${encodeURIComponent(
-    seed,
-  )}&backgroundGradient=0to1&backgroundColor=${background}&radius=8`;
 }
 
 /** Initials string from a name. */
@@ -70,4 +13,56 @@ export function initials(name: string): string {
     .slice(0, 2)
     .map((p) => p[0]?.toUpperCase() ?? "")
     .join("");
+}
+
+/** Deterministic CSS linear-gradient() string for an avatar "photo". */
+export function photoGradient([a, b]: [string, string]): string {
+  return `linear-gradient(135deg, ${a} 0%, ${b} 100%)`;
+}
+
+const DICEBEAR_STYLES = [
+  "adventurer",
+  "big-smile",
+  "fun-emoji",
+  "lorelei",
+  "micah",
+  "notionists",
+  "personas",
+  "thumbs",
+] as const;
+
+/** Deterministic Dicebear avatar URL — used as the revealed "photo". */
+export function avatarUrl(seed: string, styleIndex = 0): string {
+  const style = DICEBEAR_STYLES[styleIndex % DICEBEAR_STYLES.length];
+  return `https://api.dicebear.com/9.x/${style}/png?seed=${encodeURIComponent(
+    seed,
+  )}&backgroundType=gradientLinear&backgroundColor=ff7ad9,ffd166,00f0ff,b6ff3a,9d4edd`;
+}
+
+export function classNames(
+  ...parts: Array<string | false | null | undefined>
+): string {
+  return parts.filter(Boolean).join(" ");
+}
+
+/** Number of slots every machine shows (4x4 grid). */
+export const SLOTS_PER_MACHINE = 16;
+
+export function machinePortrait(p: CapsuleProfile): string {
+  return `${p.emoji} ${p.firstName}, ${p.age}`;
+}
+
+export function machineIdLabel(id: MachineId): string {
+  switch (id) {
+    case "romance":
+      return "Algo serio";
+    case "amistad":
+      return "Amistad primero";
+    case "aventura":
+      return "Aventura & salidas";
+    case "conversacion":
+      return "Conversación profunda";
+    case "networking":
+      return "Networking social";
+  }
 }

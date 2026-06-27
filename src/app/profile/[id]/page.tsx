@@ -2,125 +2,92 @@
 
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
-import { motion } from "framer-motion";
-import { ArrowLeft, Heart, Music2, MapPin, Sparkles } from "lucide-react";
-import { getPerson, getMachine } from "@/data/mock-data";
+import { ArrowLeft, Heart, MessageCircle, Music2, CheckCircle2 } from "lucide-react";
+import { getProfile, getMachine } from "@/data/mock-data";
+import { photoGradient } from "@/lib/utils";
 
 export default function ProfilePage() {
   const params = useParams<{ id: string }>();
-  const person = getPerson(params.id);
-  if (!person) return notFound();
-  const machine = getMachine(person.machineId);
+  const profile = getProfile(params.id);
+  if (!profile) return notFound();
+  const machine = getMachine(profile.machineId);
 
   return (
-    <div className="relative">
+    <div className="py-2 space-y-4">
+      <Link
+        href="/chats"
+        className="inline-flex items-center gap-1 text-xs text-white/55 hover:text-white"
+      >
+        <ArrowLeft className="h-4 w-4" /> Volver
+      </Link>
+
       <div
-        className="pointer-events-none absolute inset-0 opacity-30"
+        className="relative w-full overflow-hidden rounded-2xl border border-white/10"
         style={{
-          background: `radial-gradient(700px 400px at 50% -10%, ${machine?.boxColor ?? "#ff2bd6"}55, transparent 70%)`,
+          background: photoGradient(profile.photoGradient),
+          height: 240,
         }}
-      />
-      <div className="relative mx-auto max-w-4xl px-4 py-8">
-        <Link
-          href="/lobby"
-          className="inline-flex items-center gap-1 text-sm text-white/60 hover:text-white mb-6"
-        >
-          <ArrowLeft className="w-4 h-4" /> Volver
-        </Link>
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="grid sm:grid-cols-[280px_1fr] gap-6"
-        >
-          <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-neon scanlines border border-white/10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={person.photo}
-              alt={person.name}
-              className="w-full h-full object-cover"
-            />
-            {machine && (
-              <span
-                className="absolute top-3 left-3 px-2 py-1 rounded-md text-[10px] font-bold tracking-widest"
-                style={{
-                  background: `${machine.signColor}22`,
-                  color: machine.signColor,
-                }}
-              >
-                {machine.kanji} · {machine.name}
-              </span>
-            )}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-cyber-bg/85 via-transparent to-transparent" />
+        <div className="absolute bottom-3 left-4 right-4">
+          <div className="text-2xl font-display font-bold">
+            {profile.emoji} {profile.fullName}
           </div>
-
-          <div>
-            <div className="flex items-center gap-2 text-xs text-cyber-neon mb-2">
-              <Sparkles className="w-3.5 h-3.5" /> Perfil de cápsula
-            </div>
-            <h1 className="font-display font-bold text-3xl sm:text-4xl">
-              {person.emoji} {person.name}, {person.age}
-            </h1>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/60 mt-2">
-              <span>{person.pronouns}</span>
-              <span className="inline-flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5" /> {person.location}
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <Music2 className="w-3.5 h-3.5" /> {person.song}
-              </span>
-            </div>
-
-            <p className="mt-5 text-white/80 leading-relaxed">{person.bio}</p>
-
-            <div className="mt-6">
-              <div className="text-xs uppercase tracking-wider text-white/40 mb-2">
-                Intereses
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {person.interests.map((t) => (
-                  <span
-                    key={t}
-                    className="px-3 py-1 rounded-full text-xs glass"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-3 mt-6">
-              <Stat label="Lenguaje del amor" value={person.loveLanguage} />
-              <Stat label="Busca" value={person.lookingFor} />
-            </div>
-
-            <div className="mt-6">
-              <div className="text-xs uppercase tracking-wider text-white/40 mb-2">
-                Pistas que dejó
-              </div>
-              <ul className="space-y-2 text-sm text-white/80">
-                {person.hints.map((h, i) => (
-                  <li key={i} className="flex gap-2">
-                    <Heart className="w-4 h-4 text-cyber-neon mt-0.5 shrink-0" />
-                    {h}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="text-xs text-white/70">
+            {profile.age} años
+            {machine && ` · ${machine.name}`}
           </div>
-        </motion.div>
+        </div>
       </div>
+
+      <p className="text-sm text-white/75">{profile.bio}</p>
+
+      <div>
+        <div className="mb-2 text-[10px] uppercase tracking-wider text-white/45">
+          Hobbies
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {profile.hobbies.map((h) => (
+            <span key={h} className="glass rounded-full px-3 py-1 text-xs">
+              {h}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-2">
+        <Info label="Canción" value={profile.song} icon={Music2} />
+        <Info label="Lenguaje del amor" value={profile.loveLanguage} icon={Heart} />
+        <Info label="Busca" value={profile.lookingFor} icon={CheckCircle2} full />
+      </div>
+
+      <Link
+        href={`/chat/${profile.id}`}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cyber-cyan px-6 py-3 text-sm font-bold text-black hover:shadow-neon-cyan"
+      >
+        <MessageCircle className="h-4 w-4" /> Enviar mensaje
+      </Link>
     </div>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Info({
+  label,
+  value,
+  icon: Icon,
+  full,
+}: {
+  label: string;
+  value: string;
+  icon: React.ComponentType<{ className?: string }>;
+  full?: boolean;
+}) {
   return (
-    <div className="glass rounded-xl p-3">
-      <div className="text-[11px] uppercase tracking-wider text-white/40">
-        {label}
+    <div className={`glass rounded-xl p-3 ${full ? "sm:col-span-2" : ""}`}>
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/45">
+        <Icon className="h-3 w-3" /> {label}
       </div>
-      <div className="text-white/90 text-sm">{value}</div>
+      <div className="text-sm text-white/90">{value}</div>
     </div>
   );
 }

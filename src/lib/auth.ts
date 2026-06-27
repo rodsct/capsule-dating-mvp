@@ -1,15 +1,29 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { AuthUser, MatchRecord } from "@/lib/types";
+import type {
+  AuthUser,
+  ChatMessage,
+  MachineId,
+  OwnCapsule,
+  PurchaseRecord,
+  SlotPlacement,
+} from "@/lib/types";
+import { seedPlacements } from "@/data/mock-data";
 
-const USERS_KEY = "capsule-dating:users";
-const SESSION_KEY = "capsule-dating:session";
-const MATCHES_KEY = "capsule-dating:matches";
-const DEMO_FLAG_KEY = "capsule-dating:demo-seeded";
-const STARTING_CREDITS = 3;
-const DEMO_CREDITS = 10;
+const USERS_KEY = "cdx:users";
+const SESSION_KEY = "cdx:session";
+const PLACEMENTS_KEY = "cdx:placements";
+const PURCHASES_KEY = "cdx:purchases";
+const CHATS_KEY = "cdx:chats";
+const OWN_CAPSULE_KEY = "cdx:own-capsule";
+const SEEDED_KEY = "cdx:seeded";
+
 const DEMO_USERNAME = "demo_chilango";
+const DEMO_MONEDAS = 100;
+const STARTING_MONEDAS = 29;
+/** How much a "buy" or "place" action costs in monedas. */
+const ACTION_COST = 29;
 
 function safeParse<T>(raw: string | null, fallback: T): T {
   if (!raw) return fallback;
@@ -20,31 +34,75 @@ function safeParse<T>(raw: string | null, fallback: T): T {
   }
 }
 
+type Read<T> = (raw: string | null) => T;
+const readJSON =
+  <T>(fallback: T): Read<T> =>
+  (raw) =>
+    safeParse<T>(raw, fallback);
+
 function readUsers(): AuthUser[] {
   if (typeof window === "undefined") return [];
-  return safeParse<AuthUser[]>(localStorage.getItem(USERS_KEY), []);
+  return readJSON<AuthUser[]>([])(localStorage.getItem(USERS_KEY));
 }
 
 function writeUsers(users: AuthUser[]) {
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 
-/** Get the logged-in user id (string) or null. */
+function readPlacements(): SlotPlacement[] {
+  if (typeof window === "undefined") return [];
+  return readJSON<SlotPlacement[]>([])(localStorage.getItem(PLACEMENTS_KEY));
+}
+
+function writePlacements(rows: SlotPlacement[]) {
+  localStorage.setItem(PLACEMENTS_KEY, JSON.stringify(rows));
+}
+
+function readPurchases(): PurchaseRecord[] {
+  if (typeof window === "undefined") return [];
+  return readJSON<PurchaseRecord[]>([])(localStorage.getItem(PURCHASES_KEY));
+}
+
+function writePurchases(rows: PurchaseRecord[]) {
+  localStorage.setItem(PURCHASES_KEY, JSON.stringify(rows));
+}
+
+function readChats(): Record<string, ChatMessage[]> {
+  if (typeof window === "undefined") return {};
+  return readJSON<Record<string, ChatMessage[]>>({})(
+    localStorage.getItem(CHATS_KEY),
+  );
+}
+
+function writeChats(chats: Record<string, ChatMessage[]>) {
+  localStorage.setItem(CHATS_KEY, JSON.stringify(chats));
+}
+
+function readOwnCapsule(): OwnCapsule | null {
+  if (typeof window === "undefined") return null;
+  return readJSON<OwnCapsule | null>(null)(
+    localStorage.getItem(OWN_CAPSULE_KEY),
+  );
+}
+
+function writeOwnCapsule(c: OwnCapsule | null) {
+  if (!c) localStorage.removeItem(OWN_CAPSULE_KEY);
+  else localStorage.setItem(OWN_CAPSULE_KEY, JSON.stringify(c));
+}
+
 function readSessionId(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem(SESSION_KEY);
 }
-
 function writeSessionId(id: string | null) {
   if (id === null) localStorage.removeItem(SESSION_KEY);
   else localStorage.setItem(SESSION_KEY, id);
 }
 
-/** Seed a demo user with 10 credits and a few pre-opened matches on first visit. */
-function ensureDemoUser() {
+/** First-run seeding: demo user, auto-session, pre-occupied demo slots. */
+function ensureSeeded() {
   if (typeof window === "undefined") return;
-  const alreadySeeded = localStorage.getItem(DEMO_FLAG_KEY) === "1";
-  if (alreadySeeded) return;
+  if (localStorage.getItem(SEEDED_KEY) === "1") return;
 
   const users = readUsers();
   let demo = users.find((u) => u.username === DEMO_USERNAME);
@@ -52,69 +110,62 @@ function ensureDemoUser() {
     demo = {
       id: `u-demo-${Math.random().toString(36).slice(2, 8)}`,
       username: DEMO_USERNAME,
-      credits: DEMO_CREDITS,
+      monedas: DEMO_MONEDAS,
       createdAt: Date.now(),
     };
     users.push(demo);
     writeUsers(users);
   }
-  // Pre-seed a few matches for the demo account so /profile/me feels alive.
-  const seededPeople = ["p-otaku-1", "p-rock-2", "p-art-1"];
-  const existing = safeParse<MatchRecord[]>(localStorage.getItem(MATCHES_KEY), []);
-  const now = Date.now();
-  const additions: MatchRecord[] = seededPeople
-    .filter((pid) => !existing.some((m) => m.personId === pid))
-    .map((pid, i) => ({ personId: pid, openedAt: now - (i + 1) * 60_000 }));
-  if (additions.length) {
-    localStorage.setItem(MATCHES_KEY, JSON.stringify([...additions, ...existing]));
-  }
-  // auto-create session for the demo user
   writeSessionId(demo.id);
-  localStorage.setItem(DEMO_FLAG_KEY, "1");
+
+  if (readPlacements().length === 0) {
+    writePlacements(seedPlacements());
+  }
+  localStorage.setItem(SEEDED_KEY, "1");
 }
 
-export interface Auth {
-  user: AuthUser | null;
+export interface GameStore {
   ready: boolean;
-  register: (username: string) => AuthUser;
-  login: (username: string) => AuthUser | null;
+  user: AuthUser | null;
+  placements: SlotPlacement[];
+  purchases: PurchaseRecord[];
+  chats: Record<string, ChatMessage[]>;
+  ownCapsule: OwnCapsule | null;
+  /** monedas spent: returns false if not enough balance */
+  buy: (machineId: MachineId, slot: number) => { ok: boolean; reason?: string };
+  removePlacement: (machineId: MachineId, slot: number) => void;
+  placeOwn: (machineId: MachineId, slot: number, capsule: OwnCapsule) => boolean;
+  removeOwnPlacement: (machineId: MachineId, slot: number) => void;
+  sendMessage: (profileId: string, text: string) => void;
+  addReply: (profileId: string, text: string) => void;
+  addMonedas: (amount: number) => void;
   logout: () => void;
-  addCredits: (amount: number) => void;
-  spendCredit: () => boolean;
-  recordMatch: (personId: string) => void;
-  matches: MatchRecord[];
+  login: (username: string) => AuthUser | null;
+  register: (username: string) => AuthUser;
 }
 
-export function useAuth(): Auth {
+export function useGame(): GameStore {
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [matches, setMatches] = useState<MatchRecord[]>([]);
+  const [placements, setPlacements] = useState<SlotPlacement[]>([]);
+  const [purchases, setPurchases] = useState<PurchaseRecord[]>([]);
+  const [chats, setChats] = useState<Record<string, ChatMessage[]>>({});
+  const [ownCapsule, setOwnCapsule] = useState<OwnCapsule | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    ensureDemoUser();
+    ensureSeeded();
     const id = readSessionId();
     const found = id ? readUsers().find((u) => u.id === id) ?? null : null;
     if (!found && id) writeSessionId(null);
-    const savedMatches = safeParse<MatchRecord[]>(
-      localStorage.getItem(MATCHES_KEY),
-      [],
-    );
-    if (!cancelled) {
-      setUser(found);
-      setMatches(savedMatches);
-      setReady(true);
-    }
-    return () => {
-      cancelled = true;
-    };
+    setUser(found);
+    setPlacements(readPlacements());
+    setPurchases(readPurchases());
+    setChats(readChats());
+    setOwnCapsule(readOwnCapsule());
+    setReady(true);
   }, []);
 
-  const persistUser = useCallback((next: AuthUser | null) => {
-    if (!next) {
-      setUser(null);
-      return;
-    }
+  const persistUser = useCallback((next: AuthUser) => {
     const users = readUsers();
     const idx = users.findIndex((u) => u.id === next.id);
     if (idx >= 0) users[idx] = next;
@@ -123,6 +174,145 @@ export function useAuth(): Auth {
     setUser(next);
   }, []);
 
+  const buy = useCallback<GameStore["buy"]>(
+    (machineId, slot) => {
+      if (!user) return { ok: false, reason: "session" };
+      if (user.monedas < ACTION_COST) return { ok: false, reason: "monedas" };
+
+      const updated: AuthUser = { ...user, monedas: user.monedas - ACTION_COST };
+      persistUser(updated);
+
+      const placement = placements.find(
+        (p) => p.machineId === machineId && p.slot === slot,
+      );
+      const profileId = placement?.profileId;
+      const nextPlacements = placements.filter(
+        (p) => !(p.machineId === machineId && p.slot === slot),
+      );
+      setPlacements(nextPlacements);
+      writePlacements(nextPlacements);
+
+      if (profileId && profileId !== "me") {
+        const nextPurchases: PurchaseRecord[] = [
+          {
+            profileId,
+            machineId,
+            slot,
+            boughtAt: Date.now(),
+          },
+          ...purchases.filter((p) => p.profileId !== profileId),
+        ];
+        setPurchases(nextPurchases);
+        writePurchases(nextPurchases);
+      }
+      return { ok: true };
+    },
+    [user, placements, purchases, persistUser],
+  );
+
+  const removePlacement = useCallback<GameStore["removePlacement"]>(
+    (machineId, slot) => {
+      const next = placements.filter(
+        (p) => !(p.machineId === machineId && p.slot === slot),
+      );
+      setPlacements(next);
+      writePlacements(next);
+    },
+    [placements],
+  );
+
+  const placeOwn = useCallback<GameStore["placeOwn"]>(
+    (machineId, slot, capsule) => {
+      if (!user) return false;
+      if (user.monedas < ACTION_COST) return false;
+      setUser((prev) => {
+        if (!prev || prev.monedas < ACTION_COST) return prev;
+        const next = { ...prev, monedas: prev.monedas - ACTION_COST };
+        persistUser(next);
+        return next;
+      });
+      writeOwnCapsule(capsule);
+      setOwnCapsule(capsule);
+      const nextPlacements = placements.filter(
+        (p) => !(p.machineId === machineId && p.slot === slot),
+      );
+      nextPlacements.push({ machineId, slot, profileId: "me" });
+      setPlacements(nextPlacements);
+      writePlacements(nextPlacements);
+      return true;
+    },
+    [user, placements, persistUser],
+  );
+
+  const removeOwnPlacement = useCallback<GameStore["removeOwnPlacement"]>(
+    (machineId, slot) => {
+      const next = placements.filter(
+        (p) => !(p.machineId === machineId && p.slot === slot),
+      );
+      setPlacements(next);
+      writePlacements(next);
+    },
+    [placements],
+  );
+
+  const sendMessage = useCallback<GameStore["sendMessage"]>((profileId, text) => {
+    setChats((prev) => {
+      const list = prev[profileId] ?? [];
+      const msg: ChatMessage = {
+        id: `m-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        mine: true,
+        text,
+        at: Date.now(),
+      };
+      const next = { ...prev, [profileId]: [...list, msg] };
+      writeChats(next);
+      return next;
+    });
+  }, []);
+
+  const addReply = useCallback<GameStore["addReply"]>((profileId, text) => {
+    setChats((prev) => {
+      const list = prev[profileId] ?? [];
+      const msg: ChatMessage = {
+        id: `r-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        mine: false,
+        text,
+        at: Date.now(),
+      };
+      const next = { ...prev, [profileId]: [...list, msg] };
+      writeChats(next);
+      return next;
+    });
+  }, []);
+
+  const addMonedas = useCallback(
+    (amount: number) => {
+      setUser((prev) => {
+        if (!prev) return prev;
+        const next = { ...prev, monedas: prev.monedas + amount };
+        persistUser(next);
+        return next;
+      });
+    },
+    [persistUser],
+  );
+
+  const logout = useCallback(() => {
+    writeSessionId(null);
+    setUser(null);
+  }, []);
+
+  const login = useCallback(
+    (username: string) => {
+      const found = readUsers().find((u) => u.username === username) ?? null;
+      if (!found) return null;
+      writeSessionId(found.id);
+      setUser(found);
+      return found;
+    },
+    [],
+  );
+
   const register = useCallback(
     (username: string) => {
       const trimmed = username.trim();
@@ -130,13 +320,13 @@ export function useAuth(): Auth {
       const existing = users.find((u) => u.username === trimmed);
       if (existing) {
         writeSessionId(existing.id);
-        persistUser(existing);
+        setUser(existing);
         return existing;
       }
       const newUser: AuthUser = {
         id: `u-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         username: trimmed,
-        credits: STARTING_CREDITS,
+        monedas: STARTING_MONEDAS,
         createdAt: Date.now(),
       };
       users.push(newUser);
@@ -145,66 +335,25 @@ export function useAuth(): Auth {
       setUser(newUser);
       return newUser;
     },
-    [persistUser],
+    [],
   );
-
-  const login = useCallback((username: string) => {
-    const trimmed = username.trim();
-    const found = readUsers().find((u) => u.username === trimmed) ?? null;
-    if (!found) return null;
-    writeSessionId(found.id);
-    setUser(found);
-    return found;
-  }, []);
-
-  const logout = useCallback(() => {
-    writeSessionId(null);
-    setUser(null);
-  }, []);
-
-  const addCredits = useCallback(
-    (amount: number) => {
-      setUser((prev) => {
-        if (!prev) return prev;
-        const next = { ...prev, credits: prev.credits + amount };
-        persistUser(next);
-        return next;
-      });
-    },
-    [persistUser],
-  );
-
-  const spendCredit = useCallback(() => {
-    let ok = false;
-    setUser((prev) => {
-      if (!prev) return prev;
-      if (prev.credits <= 0) return prev;
-      ok = true;
-      const next = { ...prev, credits: prev.credits - 1 };
-      persistUser(next);
-      return next;
-    });
-    return ok;
-  }, [persistUser]);
-
-  const recordMatch = useCallback((personId: string) => {
-    setMatches((prev) => {
-      const record: MatchRecord = { personId, openedAt: Date.now() };
-      const next = [record, ...prev];
-      localStorage.setItem(MATCHES_KEY, JSON.stringify(next));
-      return next;
-    });
-  }, []);
 
   return {
-    user,
     ready,
-    register,
-    login,
+    user,
+    placements,
+    purchases,
+    chats,
+    ownCapsule,
+    buy,
+    removePlacement,
+    placeOwn,
+    removeOwnPlacement,
+    sendMessage,
+    addReply,
+    addMonedas,
     logout,
-    addCredits,
-    spendCredit,
-    recordMatch,
-    matches,
+    login,
+    register,
   };
 }

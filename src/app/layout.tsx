@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { CursorSpotlight } from "@/components/CursorSpotlight";
+import { Header } from "@/components/Header";
+import { Navigation } from "@/components/Navigation";
 import { Space_Grotesk } from "next/font/google";
 
 const spaceGrotesk = Space_Grotesk({
@@ -13,9 +12,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Capsule Dating — encuentra tu match en una máquinas de cápsulas",
+  title: "Capsule Dating — encuentra tu match en una máquina de cápsulas",
   description:
-    "Una sala de citas arcade estilo callejón neón de máquinas expendedora en la CDMX. Recorre el callejón, elige una máquina temática, deja una moneda, abre una cápsula y revela tu match.",
+    "Recorre el callejón de máquinas expendedoras con perfiles. Deja $29 MXN, abre una cápsula y revela a tu match.",
 };
 
 export default function RootLayout({
@@ -28,10 +27,11 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.className} min-h-screen text-white selection:bg-cyber-neon/60`}
       >
-        <CursorSpotlight />
-        <Navbar />
-        <main className="relative min-h-[calc(100vh-64px)]">{children}</main>
-        <Footer />
+        <Header />
+        <main className="mx-auto max-w-3xl px-4 pb-24 pt-4 sm:pb-10">
+          {children}
+        </main>
+        <Navigation />
       </body>
     </html>
   );

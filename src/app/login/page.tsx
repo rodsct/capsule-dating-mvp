@@ -3,79 +3,72 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { LogIn, Sparkles } from "lucide-react";
-import { useAuth } from "@/lib/auth";
-import { NeonButton } from "@/components/NeonButton";
+import { LogIn } from "lucide-react";
+import { useGame } from "@/lib/auth";
 
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next") || "/lobby";
-  const { login } = useAuth();
+  const { login } = useGame();
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     if (!username.trim()) {
       setError("Escribe tu nombre de usuario.");
       return;
     }
-    const u = login(username);
+    const u = login(username.trim());
     if (!u) {
-      setError("No se encontró la cuenta. Regístrate primero — cualquier usuario funciona.");
+      setError("No existe esa cuenta. Regístrate primero.");
       return;
     }
     router.push(next);
   };
 
   return (
-    <div className="relative mx-auto max-w-md px-4 py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass rounded-3xl p-7 scanlines"
-      >
-        <div className="flex items-center gap-2 mb-1">
-          <Sparkles className="w-5 h-5 text-cyber-neon" />
-          <span className="text-xs uppercase tracking-widest text-white/40">
-            Capsule Dating
-          </span>
-        </div>
-        <h1 className="font-display font-bold text-2xl mb-1">Bienvenido de vuelta</h1>
-        <p className="text-white/60 text-sm mb-6">
-          Inicia sesión con tu nombre de usuario. (Auth simulado — guardado solo en tu navegador.)
+    <div className="mx-auto max-w-md py-12">
+      <div className="glass rounded-2xl p-6">
+        <h1 className="font-display text-xl font-bold">Bienvenido de vuelta</h1>
+        <p className="mt-1 text-xs text-white/55">
+          Inicia sesión con tu nombre de usuario. (Datos simulados en tu
+          navegador.)
         </p>
 
-        <form onSubmit={submit} className="space-y-4">
+        <form onSubmit={submit} className="mt-5 space-y-3">
           <div>
-            <label className="block text-xs text-white/60 mb-1.5">
+            <label className="mb-1 block text-xs text-white/60">
               Nombre de usuario
             </label>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="p. ej. zorro_neon"
-              className="w-full bg-black/40 border border-white/15 rounded-xl px-4 py-3 text-sm outline-none focus:border-cyber-neon focus:shadow-neon transition"
+              className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-sm outline-none focus:border-cyber-neon"
             />
           </div>
           {error && <p className="text-sm text-cyber-neon">{error}</p>}
-          <NeonButton type="submit" className="w-full justify-center">
-            <LogIn className="w-4 h-4" /> Entrar
-          </NeonButton>
+          <button
+            type="submit"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cyber-neon px-6 py-3 text-sm font-bold text-black hover:shadow-neon"
+          >
+            <LogIn className="h-4 w-4" /> Entrar
+          </button>
         </form>
 
-        <p className="text-center text-sm text-white/50 mt-5">
+        <p className="mt-4 text-center text-xs text-white/50">
           ¿Nuevo aquí?{" "}
           <Link
             href={`/register?next=${encodeURIComponent(next)}`}
             className="text-cyber-cyan underline"
           >
-            Crea una cuenta gratis
+            Crea una cuenta
           </Link>
         </p>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -84,7 +77,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="grid place-items-center py-32 text-white/50 text-sm">
+        <div className="grid place-items-center py-24 text-sm text-white/50">
           Cargando…
         </div>
       }

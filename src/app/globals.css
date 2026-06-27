@@ -4,275 +4,154 @@
 
 :root {
   --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
-  --neon-street: #05060f;
 }
 
 html,
 body {
   background:
-    radial-gradient(1200px 700px at 50% -10%, #1a1040 0%, transparent 60%),
-    radial-gradient(900px 500px at 90% 110%, #2a0a3d 0%, transparent 55%),
-    radial-gradient(700px 500px at 10% 90%, #06203a 0%, transparent 55%),
-    #05060f;
-  color: #f3f0ff;
+    radial-gradient(1100px 640px at 50% -12%, #14123a 0%, transparent 60%),
+    radial-gradient(760px 420px at 88% 108%, #1a0f3a 0%, transparent 55%),
+    #070713;
+  color: #f4f3fb;
   min-height: 100%;
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
   background-attachment: fixed;
 }
 
-/* Neon street grid floor (retrowave perspective) */
-.cyber-grid {
+/* Subtle perspective floor kept for the lobby hall, low-key */
+.hall-floor {
   background-image:
-    linear-gradient(rgba(0, 240, 255, 0.22) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 43, 214, 0.16) 1px, transparent 1px);
-  background-size: 44px 44px;
-}
-.cyber-floor {
-  background-image:
-    linear-gradient(rgba(0, 240, 255, 0.35) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(255, 43, 214, 0.25) 2px, transparent 2px);
-  background-size: 60px 60px;
-  transform: perspective(500px) rotateX(72deg);
+    linear-gradient(rgba(120, 120, 180, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 120, 180, 0.08) 1px, transparent 1px);
+  background-size: 56px 56px;
+  transform: perspective(620px) rotateX(68deg);
   transform-origin: top center;
-  background-position-y: 0;
 }
 
-.scanlines::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.03) 0px,
-    rgba(255, 255, 255, 0.03) 1px,
-    transparent 2px,
-    transparent 4px
-  );
-  mix-blend-mode: overlay;
+.glass {
+  background: rgba(18, 18, 38, 0.55);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-strong {
+  background: rgba(15, 15, 32, 0.86);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
 .neon-text {
   text-shadow:
-    0 0 8px rgba(255, 43, 214, 0.7),
-    0 0 22px rgba(255, 43, 214, 0.45);
-}
-.neon-text-cyan {
-  text-shadow:
-    0 0 8px rgba(0, 240, 255, 0.7),
-    0 0 22px rgba(0, 240, 255, 0.45);
-}
-.neon-text-lime {
-  text-shadow:
-    0 0 8px rgba(182, 255, 58, 0.7),
-    0 0 22px rgba(182, 255, 58, 0.45);
+    0 0 6px rgba(255, 94, 138, 0.55),
+    0 0 14px rgba(255, 94, 138, 0.30);
 }
 
-.glass {
-  background: rgba(12, 14, 36, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* ---------- VENDING MACHINE ---------- */
+/* ---------- VENDING MACHINE BODY (clean, minimal) ---------- */
 
 .vm-chrome {
-  background:
-    linear-gradient(180deg,
-      #cfcfd6 0%,
-      #8b8b96 18%,
-      #3a3a44 52%,
-      #6a6a74 78%,
-      #cfcfd6 100%);
+  background: linear-gradient(180deg, #e9e9f0 0%, #9a9aa6 22%, #2c2c38 60%, #6c6c7a 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.6),
-    0 14px 30px rgba(0, 0, 0, 0.7);
+    inset 0 -3px 6px rgba(0, 0, 0, 0.55),
+    0 18px 36px rgba(0, 0, 0, 0.55);
 }
 .vm-chrome-side {
-  background: linear-gradient(90deg, #2a2a32 0%, #5a5a64 50%, #2a2a32 100%);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
-    inset 2px 0 6px rgba(0, 0, 0, 0.6);
+  background: linear-gradient(90deg, #23232c 0%, #52525e 50%, #23232c 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
-/* Glass front: translucent, with a diagonal reflection streak */
 .vm-glass {
   background:
-    linear-gradient(135deg,
-      rgba(255, 255, 255, 0.18) 0%,
-      rgba(255, 255, 255, 0.02) 40%,
-      rgba(0, 0, 0, 0.18) 70%,
-      rgba(255, 255, 255, 0.12) 100%);
-  box-shadow:
-    inset 0 0 24px rgba(0, 0, 0, 0.5),
-    inset 0 2px 6px rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(1px);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.01) 40%, rgba(0, 0, 0, 0.20) 75%, rgba(255, 255, 255, 0.10) 100%);
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.55), inset 0 2px 6px rgba(255, 255, 255, 0.25);
 }
 .vm-glass::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    115deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.25) 42%,
-    transparent 46%,
-    transparent 58%,
-    rgba(255, 255, 255, 0.12) 64%,
-    transparent 70%);
+  background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.18) 44%, transparent 50%);
   pointer-events: none;
   mix-blend-mode: screen;
 }
 
-/* Illuminated shelf strip behind capsule rows */
 .vm-shelf {
-  background: linear-gradient(180deg,
-    rgba(255, 255, 255, 0.05),
-    rgba(0, 0, 0, 0.4));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    0 -2px 6px rgba(0, 0, 0, 0.6),
-    0 4px 10px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.35));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 -1px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* A capsule ball */
-.vm-capsule {
-  background:
-    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 38%),
-    linear-gradient(160deg, var(--cap-top), var(--cap-bot));
-  box-shadow:
-    inset 0 -4px 8px rgba(0, 0, 0, 0.45),
-    inset 0 3px 4px rgba(255, 255, 255, 0.4),
-    0 2px 6px rgba(0, 0, 0, 0.5),
-    0 0 12px var(--cap-glow);
-}
-.vm-capsule::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.45);
-  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.35);
-}
-
-/* Neon marquee / sign */
 .vm-sign {
-  border-radius: 6px;
-  background:
-    linear-gradient(180deg, #0a0a14 0%, #14141f 100%);
+  background: linear-gradient(180deg, #0b0b16 0%, #161624 100%);
   box-shadow:
-    inset 0 0 0 2px var(--sign-ring, rgba(255, 43, 214, 0.5)),
-    inset 0 0 18px rgba(0, 0, 0, 0.9),
-    0 0 16px var(--sign-glow, rgba(255, 43, 214, 0.5));
+    inset 0 0 0 2px var(--sign-ring, rgba(255, 94, 138, 0.6)),
+    inset 0 0 18px rgba(0, 0, 0, 0.85),
+    0 0 14px var(--sign-glow, rgba(255, 94, 138, 0.5));
 }
 
-/* Glowing press button */
 .vm-button {
   background: radial-gradient(circle at 35% 30%, var(--btn-hi) 0%, var(--btn-lo) 70%);
   box-shadow:
-    inset 0 2px 3px rgba(255, 255, 255, 0.7),
+    inset 0 2px 3px rgba(255, 255, 255, 0.65),
     inset 0 -3px 5px rgba(0, 0, 0, 0.6),
-    0 0 14px var(--btn-glow, rgba(255, 43, 214, 0.7));
+    0 0 12px var(--btn-glow, rgba(255, 94, 138, 0.7));
 }
-.vm-button:active {
-  box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.7),
-    0 0 22px var(--btn-glow, rgba(255, 43, 214, 0.9));
-}
-
-/* Coin slot */
 .vm-coin-slot {
-  background: #05050a;
-  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.9), inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  background: #04050a;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.9);
 }
-
-/* Dispense bin */
 .vm-bin {
-  background: linear-gradient(180deg, #05050a 0%, #141420 100%);
+  background: linear-gradient(180deg, #04050a 0%, #141420 100%);
+  box-shadow: inset 0 8px 14px rgba(0, 0, 0, 0.9);
+}
+
+/* Illuminated capsule orbs used on slot cards */
+.cap-orb {
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0) 40%),
+    linear-gradient(160deg, var(--cap-top), var(--cap-bot));
   box-shadow:
-    inset 0 8px 14px rgba(0, 0, 0, 0.9),
-    inset 0 -2px 0 rgba(255, 255, 255, 0.06);
+    inset 0 -4px 8px rgba(0, 0, 0, 0.4),
+    inset 0 3px 4px rgba(255, 255, 255, 0.4),
+    0 4px 10px rgba(0, 0, 0, 0.4),
+    0 0 16px var(--cap-glow, rgba(255, 94, 138, 0.4));
 }
 
-/* Hide scrollbar for horizontal scroll areas */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Empty slot panel */
+.slot-empty {
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0 8px, transparent 8px 16px),
+    rgba(255, 255, 255, 0.02);
 }
 
-/* 3D perspective helpers */
-.scene {
-  perspective: 1400px;
-  perspective-origin: 50% 38%;
-}
-.world {
-  transform-style: preserve-3d;
-  transition: transform 0.18s linear;
-}
-.machine-3d {
-  transform-style: preserve-3d;
-}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Cursor spotlight */
-.spotlight {
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  background: radial-gradient(
-    320px 320px at var(--mx, 50%) var(--my, 50%),
-    rgba(0, 240, 255, 0.10),
-    rgba(255, 43, 214, 0.05) 35%,
-    transparent 60%);
-  mix-blend-mode: screen;
-  transition: background 0.12s linear;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #05060f;
-}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #070815; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(#ff2bd6, #9d4edd);
+  background: linear-gradient(#ff5e8a, #9d4edd);
   border-radius: 8px;
 }
 
-/* Side-shift marquee for Japanese sign ticker */
-@keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+@keyframes signpulse {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 5px var(--sign-glow, #ff5e8a)); }
+  50% { filter: brightness(1.25) drop-shadow(0 0 12px var(--sign-glow, #ff5e8a)); }
 }
-.animate-ticker {
-  animation: ticker 18s linear infinite;
-}
+.animate-signpulse { animation: signpulse 2.6s ease-in-out infinite; }
 
-/* Falling capsule dispense */
 @keyframes capsuleDrop {
-  0% { transform: translateY(-220%) rotate(0deg); opacity: 0; }
+  0% { transform: translateY(-240%) rotate(0deg); opacity: 0; }
   10% { opacity: 1; }
   70% { transform: translateY(0%) rotate(220deg); }
   85% { transform: translateY(-14%) rotate(240deg); }
   100% { transform: translateY(0%) rotate(260deg); opacity: 1; }
 }
 .animate-capsule-drop {
-  animation: capsuleDrop 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: capsuleDrop 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Slot reel blur spin */
-@keyframes reel-spin {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-66.666%); }
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
-.reel-spin {
-  animation: reel-spin 0.12s linear infinite;
-}
+.animate-float-soft { animation: floatSoft 5s ease-in-out infinite; }
