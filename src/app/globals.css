@@ -123,6 +123,88 @@ body {
     rgba(255, 255, 255, 0.02);
 }
 
+/* ---------- SLOT NUMBER BADGE ---------- */
+.vm-slot-badge {
+  letter-spacing: 0.02em;
+}
+
+/* ---------- INTERIOR SHELF / LIGHTING ---------- */
+.vm-grid-bg {
+  background:
+    linear-gradient(180deg, rgba(20, 18, 48, 0.85) 0%, rgba(8, 8, 20, 0.95) 100%);
+  box-shadow:
+    inset 0 0 30px rgba(0, 0, 0, 0.6),
+    inset 0 2px 6px rgba(255, 255, 255, 0.18);
+}
+.vm-light-bar {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(120,160,255,0.55) 50%, rgba(255,255,255,0) 100%);
+  box-shadow: 0 0 14px rgba(120,160,255,0.45);
+}
+
+/* ---------- DIGITAL DISPLAY ---------- */
+.vm-display {
+  background: linear-gradient(180deg, #05060a 0%, #0b0e18 100%);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.9),
+    inset 0 0 0 2px rgba(255, 43, 214, 0.25),
+    0 0 12px rgba(255, 43, 214, 0.35);
+  font-family: var(--font-display);
+}
+.vm-display-text {
+  color: #ff2bd6;
+  text-shadow:
+    0 0 4px rgba(255, 43, 214, 0.9),
+    0 0 12px rgba(255, 43, 214, 0.5);
+  letter-spacing: 0.35em;
+  font-variant-numeric: tabular-nums;
+}
+.vm-display-text.dim { color: #6b224d; text-shadow: none; }
+
+/* ---------- KEYPAD BUTTONS ---------- */
+.vm-key {
+  background: radial-gradient(circle at 35% 28%, #3a3a48 0%, #14141c 78%);
+  box-shadow:
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.45),
+    inset 0 -3px 5px rgba(0, 0, 0, 0.7),
+    0 3px 5px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.vm-key:active {
+  background: radial-gradient(circle at 35% 28%, #4a4a5e 0%, #1b1b26 80%);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.75),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* ---------- BIG BUY / TIRAR BUTTON ---------- */
+.vm-buy-btn {
+  background:
+    linear-gradient(180deg, #ffd9f3 0%, #ff2bd6 45%, #c01a9d 100%);
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, 0.75),
+    inset 0 -3px 5px rgba(0, 0, 0, 0.35),
+    0 6px 14px rgba(255, 43, 214, 0.45),
+    0 0 22px rgba(255, 43, 214, 0.4);
+}
+
+/* ---------- DISPENSE TRAY ---------- */
+.vm-tray {
+  background: linear-gradient(180deg, #141420 0%, #04050a 100%);
+  box-shadow:
+    inset 0 10px 18px rgba(0, 0, 0, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Control panel chrome backplate */
+.vm-panel {
+  background: linear-gradient(180deg, #1c1c28 0%, #0a0a12 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.6),
+    0 6px 14px rgba(0, 0, 0, 0.45);
+}
+
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 

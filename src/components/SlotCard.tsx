@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { MapPin, Plus } from "lucide-react";
 import type { CapsuleProfile, OwnCapsule } from "@/lib/types";
-import { classNames } from "@/lib/utils";
+import { classNames, formatSlotCode } from "@/lib/utils";
 import { genderInfo } from "@/data/mock-data";
 
 export type SlotKind = "occupied" | "empty" | "mine";
@@ -15,6 +15,7 @@ interface Props {
   ownCapsule?: OwnCapsule | null;
   gradient: [string, string];
   index?: number;
+  selected?: boolean;
   onClick?: () => void;
 }
 
@@ -25,8 +26,11 @@ export function SlotCard({
   ownCapsule,
   gradient,
   index = 0,
+  selected = false,
   onClick,
 }: Props) {
+  const code = formatSlotCode(slot);
+
   if (kind === "empty") {
     return (
       <motion.button
@@ -40,10 +44,13 @@ export function SlotCard({
         className={classNames(
           "slot-empty group relative aspect-square rounded-xl border border-dashed",
           "flex flex-col items-center justify-center gap-1 p-2 text-center",
-          "border-white/15 hover:border-cyber-lime/60 transition-colors",
+          selected
+            ? "border-cyber-lime/80 bg-cyber-lime/10 shadow-[0_0_16px_rgba(182,255,58,0.45)]"
+            : "border-white/15 hover:border-cyber-lime/60 transition-colors",
         )}
-        aria-label={`Espacio ${slot + 1} libre — coloca tu cápsula`}
+        aria-label={`Espacio ${code} libre — coloca tu cápsula`}
       >
+        <SlotBadge code={code} tone="empty" selected={selected} />
         <div
           className="grid h-8 w-8 place-items-center rounded-full border border-white/15 text-white/40 transition-colors group-hover:text-cyber-lime"
         >
@@ -77,7 +84,8 @@ export function SlotCard({
       className={classNames(
         "group relative aspect-square rounded-xl border p-3 text-left",
         "flex flex-col items-center justify-between gap-1 overflow-hidden",
-        kind === "mine" ? "border-cyber-lime/50" : "border-white/10",
+        selected ? "border-cyber-neon/80 shadow-[0_0_18px_rgba(255,43,214,0.55)]" : "border-white/10",
+        kind === "mine" && !selected && "border-cyber-lime/50",
         "hover:shadow-[0_0_20px_var(--glow)] transition-shadow",
       )}
       style={{
@@ -87,7 +95,7 @@ export function SlotCard({
       }}
       aria-label={
         kind === "mine"
-          ? `Tu cápsula en el espacio ${slot + 1}`
+          ? `Tu cápsula en el espacio ${code}`
           : `Ver cápsula de ${profile?.firstName ?? "—"}`
       }
     >
@@ -101,6 +109,8 @@ export function SlotCard({
           Tú
         </span>
       )}
+
+      <SlotBadge code={code} tone="occupied" selected={selected} />
 
       <div
         className="cap-orb relative grid h-12 w-12 place-items-center rounded-full text-lg ring-2"
@@ -156,5 +166,34 @@ export function SlotCard({
           ?.label.split(" ")[0]}
       </span>
     </motion.button>
+  );
+}
+
+/** Small selection-code badge that looks like a vending-machine label. */
+function SlotBadge({
+  code,
+  tone,
+  selected,
+}: {
+  code: string;
+  tone: "occupied" | "empty";
+  selected: boolean;
+}) {
+  return (
+    <span
+      className={classNames(
+        "vm-slot-badge absolute left-1.5 top-1.5 z-10 inline-flex h-5 min-w-5 items-center justify-center rounded-md border px-1 font-mono text-[10px] font-bold tabular-nums tracking-tight",
+        tone === "empty"
+          ? selected
+            ? "border-cyber-lime/70 bg-cyber-lime/20 text-cyber-lime"
+            : "border-white/15 bg-black/40 text-white/55"
+          : selected
+            ? "border-cyber-neon/70 bg-cyber-neon/20 text-cyber-neon"
+            : "border-white/15 bg-black/55 text-white/70",
+      )}
+      style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.18)" }}
+    >
+      {code}
+    </span>
   );
 }

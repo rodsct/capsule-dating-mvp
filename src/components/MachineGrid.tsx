@@ -16,46 +16,82 @@ interface Props {
   machine: VendingMachine;
   placements: SlotPlacement[];
   ownCapsule: OwnCapsule | null;
+  selectedSlot: number | null;
   onSlotClick: (slot: number, kind: SlotKind, profile?: CapsuleProfile) => void;
 }
+
+const SHELF_COLS = 4;
 
 export function MachineGrid({
   machine,
   placements,
   ownCapsule,
+  selectedSlot,
   onSlotClick,
 }: Props) {
   const [showLegend, setShowLegend] = useState(false);
 
+  const rows = Math.ceil(machine.slots / SHELF_COLS);
+
   return (
     <div className="space-y-3">
-      <div className="vm-glass relative grid grid-cols-3 gap-2 rounded-2xl p-3 sm:grid-cols-4 sm:gap-3 sm:p-4">
-        {Array.from({ length: machine.slots }).map((_, slot) => {
-          const placement = placements.find(
-            (p) => p.machineId === machine.id && p.slot === slot,
-          );
-          const profileId = placement?.profileId;
-          let kind: SlotKind = "empty";
-          let profile: CapsuleProfile | undefined;
-          if (profileId === "me") {
-            kind = "mine" as SlotKind;
-          } else if (profileId) {
-            kind = "occupied" as SlotKind;
-            profile = getProfile(profileId);
-          }
+      <div className="vm-grid-bg vm-glass relative rounded-2xl p-3 sm:p-4">
+        {Array.from({ length: rows }).map((_, rowIdx) => {
+          const start = rowIdx * SHELF_COLS;
+          const end = start + SHELF_COLS;
           return (
-            <SlotCard
-              key={slot}
-              slot={slot}
-              kind={kind}
-              profile={profile}
-              ownCapsule={ownCapsule}
-              gradient={machine.id ? ["#ff2bd6", "#9d4edd"] : ["#000", "#000"]}
-              index={slot}
-              onClick={() => onSlotClick(slot, kind, profile)}
-            />
+            <div key={rowIdx} className="relative">
+              <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                {Array.from({ length: machine.slots })
+                  .slice(start, end)
+                  .map((_, i) => {
+                    const slot = start + i;
+                    if (slot >= machine.slots) {
+                      return <span key={slot} aria-hidden className="block" />;
+                    }
+                    const placement = placements.find(
+                      (p) => p.machineId === machine.id && p.slot === slot,
+                    );
+                    const profileId = placement?.profileId;
+                    let kind: SlotKind = "empty";
+                    let profile: CapsuleProfile | undefined;
+                    if (profileId === "me") {
+                      kind = "mine" as SlotKind;
+                    } else if (profileId) {
+                      kind = "occupied" as SlotKind;
+                      profile = getProfile(profileId);
+                    }
+                    return (
+                      <SlotCard
+                        key={slot}
+                        slot={slot}
+                        kind={kind}
+                        profile={profile}
+                        ownCapsule={ownCapsule}
+                        gradient={["#ff2bd6", "#9d4edd"]}
+                        index={slot}
+                        selected={selectedSlot === slot}
+                        onClick={() => onSlotClick(slot, kind, profile)}
+                      />
+                    );
+                  })}
+              </div>
+              {/* illuminated shelf rail under each row */}
+              {rowIdx < rows - 1 && (
+                <div
+                  aria-hidden
+                  className="vm-shelf my-2 h-1.5 rounded-full"
+                />
+              )}
+            </div>
           );
         })}
+
+        {/* top interior light bar */}
+        <div
+          aria-hidden
+          className="vm-light-bar pointer-events-none absolute inset-x-3 top-1 h-1.5 rounded-full"
+        />
       </div>
 
       {/* Legend */}
