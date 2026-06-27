@@ -34,8 +34,8 @@ function LoginForm() {
       <div className="glass rounded-2xl p-6">
         <h1 className="font-display text-xl font-bold">Bienvenido de vuelta</h1>
         <p className="mt-1 text-xs text-white/55">
-          Inicia sesión con tu nombre de usuario. (Datos simulados en tu
-          navegador.)
+          Inicia sesión con tu nombre de usuario para guardar tus créditos y
+          cápsulas. (Datos simulados en tu navegador.)
         </p>
 
         <form onSubmit={submit} className="mt-5 space-y-3">

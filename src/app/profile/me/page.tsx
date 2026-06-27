@@ -3,10 +3,8 @@
 import Link from "next/link";
 import { Boxes, Coins, LogOut, MessageCircle, Trash2, Plus } from "lucide-react";
 import { useGame } from "@/lib/auth";
-import { getProfile } from "@/data/mock-data";
-import { formatMXN, capsuleGradient } from "@/lib/utils";
-
-const ADD_AMOUNTS = [29, 100, 500];
+import { getProfile, CREDIT_PACKS, CREDIT_PRICE } from "@/data/mock-data";
+import { formatMXN, capsuleGradient, classNames } from "@/lib/utils";
 
 export default function MyProfilePage() {
   const {
@@ -17,7 +15,7 @@ export default function MyProfilePage() {
     chats,
     ownCapsule,
     removeOwnPlacement,
-    addMonedas,
+    addCredits,
     logout,
   } = useGame();
 
@@ -86,17 +84,38 @@ export default function MyProfilePage() {
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full border border-cyber-lime/40 bg-white/5 px-3 py-1.5 text-sm font-semibold text-cyber-lime">
-            <Coins className="h-4 w-4" /> {user.monedas} monedas
+            <Coins className="h-4 w-4" /> Tienes {user.credits}{" "}
+            {user.credits === 1 ? "crédito" : "créditos"}
           </span>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {ADD_AMOUNTS.map((n) => (
+        <p className="mt-2 text-[11px] text-white/45">
+          1 crédito = 1 compra o 1 publicación. Todos los créditos valen lo mismo
+          ({formatMXN(CREDIT_PRICE)} cada uno).
+        </p>
+
+        {/* Credit packs */}
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          {CREDIT_PACKS.map((pack) => (
             <button
-              key={n}
-              onClick={() => addMonedas(n)}
-              className="inline-flex items-center gap-1 rounded-full bg-cyber-cyan px-3 py-1.5 text-xs font-bold text-black hover:shadow-neon-cyan"
+              key={pack.credits}
+              onClick={() => addCredits(pack.credits)}
+              className={classNames(
+                "glass flex items-center justify-between gap-2 rounded-xl p-3 text-left transition hover:-translate-y-0.5",
+              )}
             >
-              <Plus className="h-3.5 w-3.5" /> {n} monedas
+              <span className="flex flex-col">
+                <span className="text-sm font-bold">
+                  {pack.label} — {formatMXN(pack.price)}
+                </span>
+                <span className="text-[10px] text-white/55">
+                  {pack.savings > 0
+                    ? `ahorras ${formatMXN(pack.savings)} · ${formatMXN(Math.round(pack.price / pack.credits))}/crédito`
+                    : `${formatMXN(pack.price)}/crédito`}
+                </span>
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-cyber-cyan px-3 py-1.5 text-xs font-bold text-black hover:shadow-neon-cyan">
+                <Plus className="h-3.5 w-3.5" /> Agregar
+              </span>
             </button>
           ))}
         </div>
@@ -237,7 +256,7 @@ export default function MyProfilePage() {
       </section>
 
       <p className="pt-2 text-center text-[10px] text-white/35">
-        Demo · monedas y datos simulados · {formatMXN(29)} por acción
+        Demo · créditos y datos simulados · 1 crédito = {formatMXN(CREDIT_PRICE)}
       </p>
     </div>
   );

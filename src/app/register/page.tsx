@@ -30,7 +30,8 @@ function RegisterForm() {
       <div className="glass rounded-2xl p-6">
         <h1 className="font-display text-xl font-bold">Únete a la sala</h1>
         <p className="mt-1 text-xs text-white/55">
-          Elige un nombre de usuario para empezar con monedas demo.
+          Elige un nombre de usuario para empezar con 1 crédito de cortesía (1
+          crédito = {`$29 MXN`}). Compra más créditos en tu perfil.
         </p>
 
         <form onSubmit={submit} className="mt-5 space-y-3">

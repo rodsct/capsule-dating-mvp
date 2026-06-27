@@ -74,7 +74,7 @@ export interface SlotPlacement {
 export interface AuthUser {
   id: string;
   username: string;
-  monedas: number;
+  credits: number;
   createdAt: number;
 }
 

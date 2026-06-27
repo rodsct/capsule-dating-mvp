@@ -20,10 +20,10 @@ const OWN_CAPSULE_KEY = "cdx:own-capsule";
 const SEEDED_KEY = "cdx:seeded";
 
 const DEMO_USERNAME = "demo_chilango";
-const DEMO_MONEDAS = 100;
-const STARTING_MONEDAS = 29;
-/** How much a "buy" or "place" action costs in monedas. */
-const ACTION_COST = 29;
+const DEMO_CREDITS = 20;
+const STARTING_CREDITS = 1;
+/** How much a "buy" or "place" action costs in créditos. */
+const ACTION_COST = 1;
 
 const CDMX: MachineId = "cdmx";
 
@@ -44,7 +44,23 @@ const readJSON =
 
 function readUsers(): AuthUser[] {
   if (typeof window === "undefined") return [];
-  return readJSON<AuthUser[]>([])(localStorage.getItem(USERS_KEY));
+  const users = readJSON<AuthUser[]>([])(localStorage.getItem(USERS_KEY));
+  // One-time migration: old installs stored the balance as `monedas`.
+  // Copy any stale `monedas` field into `credits` and drop the legacy key.
+  let mutated = false;
+  for (const u of users) {
+    const legacy = (u as unknown as { monedas?: number }).monedas;
+    if (typeof legacy === "number" && (!("credits" in u) || u.credits == null)) {
+      u.credits = legacy;
+      mutated = true;
+    }
+    if ("monedas" in (u as object)) {
+      delete (u as Partial<{ monedas?: number }>).monedas;
+      mutated = true;
+    }
+  }
+  if (mutated) writeUsers(users);
+  return users;
 }
 
 function writeUsers(users: AuthUser[]) {
@@ -112,7 +128,7 @@ function ensureSeeded() {
     demo = {
       id: `u-demo-${Math.random().toString(36).slice(2, 8)}`,
       username: DEMO_USERNAME,
-      monedas: DEMO_MONEDAS,
+      credits: DEMO_CREDITS,
       createdAt: Date.now(),
     };
     users.push(demo);
@@ -133,14 +149,14 @@ export interface GameStore {
   purchases: PurchaseRecord[];
   chats: Record<string, ChatMessage[]>;
   ownCapsule: OwnCapsule | null;
-  /** monedas spent: returns false if not enough balance */
+  /** créditos spent: returns false if not enough balance */
   buy: (machineId: MachineId, slot: number) => { ok: boolean; reason?: string };
   removePlacement: (machineId: MachineId, slot: number) => void;
   placeOwn: (machineId: MachineId, slot: number, capsule: OwnCapsule) => boolean;
   removeOwnPlacement: (machineId: MachineId, slot: number) => void;
   sendMessage: (profileId: string, text: string) => void;
   addReply: (profileId: string, text: string) => void;
-  addMonedas: (amount: number) => void;
+  addCredits: (amount: number) => void;
   logout: () => void;
   login: (username: string) => AuthUser | null;
   register: (username: string) => AuthUser;
@@ -187,9 +203,9 @@ export function useGame(): GameStore {
   const buy = useCallback<GameStore["buy"]>(
     (machineId, slot) => {
       if (!user) return { ok: false, reason: "session" };
-      if (user.monedas < ACTION_COST) return { ok: false, reason: "monedas" };
+      if (user.credits < ACTION_COST) return { ok: false, reason: "credits" };
 
-      const updated: AuthUser = { ...user, monedas: user.monedas - ACTION_COST };
+      const updated: AuthUser = { ...user, credits: user.credits - ACTION_COST };
       persistUser(updated);
 
       const placement = placements.find(
@@ -234,10 +250,10 @@ export function useGame(): GameStore {
   const placeOwn = useCallback<GameStore["placeOwn"]>(
     (machineId, slot, capsule) => {
       if (!user) return false;
-      if (user.monedas < ACTION_COST) return false;
+      if (user.credits < ACTION_COST) return false;
       setUser((prev) => {
-        if (!prev || prev.monedas < ACTION_COST) return prev;
-        const next = { ...prev, monedas: prev.monedas - ACTION_COST };
+        if (!prev || prev.credits < ACTION_COST) return prev;
+        const next = { ...prev, credits: prev.credits - ACTION_COST };
         persistUser(next);
         return next;
       });
@@ -295,11 +311,11 @@ export function useGame(): GameStore {
     });
   }, []);
 
-  const addMonedas = useCallback(
+  const addCredits = useCallback(
     (amount: number) => {
       setUser((prev) => {
         if (!prev) return prev;
-        const next = { ...prev, monedas: prev.monedas + amount };
+        const next = { ...prev, credits: prev.credits + amount };
         persistUser(next);
         return next;
       });
@@ -336,7 +352,7 @@ export function useGame(): GameStore {
       const newUser: AuthUser = {
         id: `u-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         username: trimmed,
-        monedas: STARTING_MONEDAS,
+        credits: STARTING_CREDITS,
         createdAt: Date.now(),
       };
       users.push(newUser);
@@ -361,7 +377,7 @@ export function useGame(): GameStore {
     removeOwnPlacement,
     sendMessage,
     addReply,
-    addMonedas,
+    addCredits,
     logout,
     login,
     register,

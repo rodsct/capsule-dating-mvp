@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { CapsuleProfile } from "@/lib/types";
-import { MACHINE, genderInfo, getProfile } from "@/data/mock-data";
+import { MACHINE, ACTION_COST_CREDITS, CREDIT_PRICE, genderInfo, getProfile } from "@/data/mock-data";
 import { useGame } from "@/lib/auth";
 import { MachineGrid } from "@/components/MachineGrid";
 import { Keypad } from "@/components/Keypad";
@@ -131,8 +131,8 @@ export default function HomePage() {
       setMsg(INVALID_MSG);
       return;
     }
-    if (user.monedas < MACHINE.price) {
-      setMsg({ text: "Sin monedas", tone: "warn" });
+    if (user.credits < ACTION_COST_CREDITS) {
+      setMsg({ text: "Sin créditos", tone: "warn" });
       return;
     }
 
@@ -142,7 +142,7 @@ export default function HomePage() {
     setBuying(false);
 
     if (!result.ok) {
-      setMsg({ text: "Sin monedas", tone: "warn" });
+      setMsg({ text: "Sin créditos", tone: "warn" });
       return;
     }
 
@@ -183,11 +183,11 @@ export default function HomePage() {
             {free} espacios libres
           </span>
           <span className="inline-flex items-center gap-1 rounded-full border border-cyber-neon/40 bg-white/5 px-2.5 py-0.5 font-semibold text-cyber-neon">
-            <Coins className="h-3 w-3" /> {formatMXN(MACHINE.price)}
+            <Coins className="h-3 w-3" /> 1 crédito = {formatMXN(CREDIT_PRICE)}
           </span>
           {user && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5">
-              {user.monedas} monedas
+            <span className="inline-flex items-center gap-1 rounded-full border border-cyber-neon/40 bg-white/5 px-2.5 py-0.5 font-semibold text-cyber-neon">
+              {user.credits} {user.credits === 1 ? "crédito" : "créditos"}
             </span>
           )}
         </div>
@@ -280,7 +280,7 @@ export default function HomePage() {
                   : placementFor(selectedSlot)?.profileId === "me"
                     ? "Tu cápsula"
                     : placementFor(selectedSlot)
-                      ? `Comprar ${formatMXN(MACHINE.price)}`
+                      ? `Comprar (1 crédito)`
                       : "Colocar cápsula"
               }
             />
@@ -295,17 +295,16 @@ export default function HomePage() {
               ) : !placementFor(selectedSlot) ? (
                 <EmptySlotCTA
                   slot={selectedSlot}
-                  canAfford={!!user && user.monedas >= MACHINE.price}
+                  canAfford={!!user && user.credits >= ACTION_COST_CREDITS}
                 />
               ) : placementFor(selectedSlot)?.profileId === "me" ? (
                 <MineSlotCTA slot={selectedSlot} />
-              ) : user && user.monedas < MACHINE.price ? (
-                <NoMonedasCTA />
+              ) : user && user.credits < ACTION_COST_CREDITS ? (
+                <NoCreditsCTA />
               ) : (
                 <p className="text-white/55">
                   Presiona <span className="font-semibold text-cyber-neon">Comprar</span>{" "}
-                  para abrir la cápsula {formatSlotCode(selectedSlot)} por{" "}
-                  {formatMXN(MACHINE.price)}.
+                  para abrir la cápsula {formatSlotCode(selectedSlot)} por 1 crédito.
                 </p>
               )}
             </div>
@@ -369,17 +368,17 @@ function EmptySlotCTA({
     <div className="flex flex-col gap-1.5">
       <p className="text-white/55">
         Espacio <span className="font-semibold text-cyber-lime">{formatSlotCode(slot)}</span>{" "}
-        vacío — coloca aquí tu cápsula por {formatMXN(MACHINE.price)}.
+        vacío — coloca aquí tu cápsula por 1 crédito.
       </p>
       {canAfford ? (
         <Link
           href={`/place/cdmx?slot=${slot}`}
           className="inline-flex w-fit items-center gap-1 rounded-full bg-cyber-lime px-3 py-1.5 text-[11px] font-bold text-black hover:brightness-110"
         >
-          <Plus className="h-3 w-3" /> Colocar mi cápsula aquí
+          <Plus className="h-3 w-3" /> Publicar mi cápsula aquí (1 crédito)
         </Link>
       ) : (
-        <NoMonedasCTA />
+        <NoCreditsCTA />
       )}
     </div>
   );
@@ -393,15 +392,15 @@ function MineSlotCTA({ slot }: { slot: number }) {
   );
 }
 
-function NoMonedasCTA() {
+function NoCreditsCTA() {
   return (
     <div className="flex flex-col gap-1.5">
-      <p className="text-cyber-neon">Monedas insuficientes.</p>
+      <p className="text-cyber-neon">No tienes créditos. Recarga en tu perfil.</p>
       <Link
         href="/profile/me"
         className="inline-flex w-fit items-center gap-1 rounded-full border border-cyber-neon/40 bg-cyber-neon/10 px-3 py-1.5 text-[11px] font-bold text-cyber-neon hover:bg-cyber-neon/20"
       >
-        <Coins className="h-3 w-3" /> Recargar monedas
+        <Coins className="h-3 w-3" /> Recargar créditos
       </Link>
     </div>
   );

@@ -17,10 +17,13 @@ export function Header() {
         </Link>
         <div className="flex items-center gap-2">
           {ready && user && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-cyber-lime/40 bg-white/5 px-2.5 py-1 text-xs font-semibold text-cyber-lime">
+            <Link
+              href="/profile/me"
+              className="inline-flex items-center gap-1 rounded-full border border-cyber-lime/40 bg-white/5 px-2.5 py-1 text-xs font-bold text-cyber-lime hover:shadow-neon"
+            >
               <Coins className="h-3.5 w-3.5" />
-              {user.monedas}
-            </span>
+              {user.credits} {user.credits === 1 ? "crédito" : "créditos"}
+            </Link>
           )}
           <Link
             href="/profile/me"

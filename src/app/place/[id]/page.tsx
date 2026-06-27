@@ -10,8 +10,12 @@ import {
   CAPSULE_PRESETS,
   GENDER_CODES,
   MACHINE,
+  CREDIT_PRICE,
   genderInfo,
 } from "@/data/mock-data";
+
+/** Cost in créditos of placing your own capsule. */
+const PLACE_COST_CREDITS = 1;
 import { useGame } from "@/lib/auth";
 import { formatMXN } from "@/lib/utils";
 
@@ -40,22 +44,22 @@ function PlaceInner() {
   const [bio, setBio] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  if (ready && (!user || user.monedas < MACHINE.price)) {
+  if (ready && (!user || user.credits < PLACE_COST_CREDITS)) {
     return (
       <div className="mx-auto max-w-sm py-10 text-center">
         <Coins className="mx-auto h-8 w-8 text-cyber-neon" />
         <h1 className="mt-3 font-display text-lg font-bold">
-          Monedas insuficientes
+          Créditos insuficientes
         </h1>
         <p className="mt-1 text-sm text-white/55">
-          Publicar tu cápsula cuesta {formatMXN(MACHINE.price)}. Añade monedas
-          demo en tu perfil.
+          Publicar tu cápsula cuesta 1 crédito ({formatMXN(CREDIT_PRICE)}).
+          Recarga créditos en tu perfil.
         </p>
         <Link
           href="/profile/me"
           className="mt-4 inline-block rounded-full bg-cyber-neon px-5 py-2.5 text-sm font-bold text-black"
         >
-          + monedas
+          + créditos
         </Link>
       </div>
     );
@@ -108,7 +112,7 @@ function PlaceInner() {
     };
     const ok = placeOwn(MACHINE.id, slot, cap);
     if (!ok) {
-      setError("No se pudo publicar (¿monedas insuficientes?).");
+      setError("No se pudo publicar (¿créditos insuficientes?).");
       return;
     }
     router.push("/");
@@ -127,8 +131,13 @@ function PlaceInner() {
         Coloca tu cápsula — espacio {slot + 1}
       </h1>
       <p className="mt-1 text-xs text-white/55">
-        Tu cápsula aparecerá en la máquina de la CDMX. Cuesta{" "}
-        {formatMXN(MACHINE.price)}.
+        Tu cápsula aparecerá en la máquina de la CDMX. Cuesta 1 crédito (
+        {formatMXN(CREDIT_PRICE)}). Tienes{" "}
+        <span className="font-semibold text-cyber-lime">
+          {user?.credits ?? 0}{" "}
+          {(user?.credits ?? 0) === 1 ? "crédito" : "créditos"}
+        </span>
+        .
       </p>
 
       <form onSubmit={submit} className="glass mt-4 space-y-4 rounded-2xl p-5">
@@ -272,7 +281,7 @@ function PlaceInner() {
           type="submit"
           className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-cyber-neon px-6 py-3 text-sm font-bold text-black hover:shadow-neon"
         >
-          Publicar mi cápsula — {formatMXN(MACHINE.price)}
+          Publicar cápsula — 1 crédito
         </button>
       </form>
 

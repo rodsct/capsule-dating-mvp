@@ -9,6 +9,34 @@ import type {
 /** Each action (buy + place) costs the same amount of MXN. */
 export const ACTION_PRICE = 29;
 
+/** Price in MXN of a single crédito. 1 crédito = $29 MXN. */
+export const CREDIT_PRICE = 29;
+
+/** Cost in créditos of a single action (buy or place). */
+export const ACTION_COST_CREDITS = 1;
+
+export interface CreditPack {
+  /** number of créditos in the pack */
+  credits: number;
+  /** price in MXN */
+  price: number;
+  /** savings vs buying créditos one-by-one, in MXN */
+  savings: number;
+  /** human label, e.g. "5 créditos" */
+  label: string;
+}
+
+/**
+ * Volume packs for créditos. Better price per crédito as quantity grows.
+ * 1 crédito = $29 MXN baseline.
+ */
+export const CREDIT_PACKS: CreditPack[] = [
+  { credits: 1, price: 29, savings: 0, label: "1 crédito" },
+  { credits: 5, price: 125, savings: 20, label: "5 créditos" },
+  { credits: 10, price: 220, savings: 70, label: "10 créditos" },
+  { credits: 20, price: 400, savings: 180, label: "20 créditos" },
+];
+
 /** Total slots on the single CDMX machine. */
 export const SLOTS_COUNT = 12;
 
@@ -18,7 +46,7 @@ export const MACHINE: VendingMachine = {
   name: "Cápsulas de la CDMX",
   subtitle: "Una máquina, muchas personas",
   description:
-    "Una sola máquina de cápsulas para toda la Ciudad de México. Coloca la tuya o abre la de alguien más por $29 MXN.",
+    "Una sola máquina de cápsulas para toda la Ciudad de México. Coloca la tuya o abre la de alguien más por 1 crédito ($29 MXN).",
   price: ACTION_PRICE,
   slots: SLOTS_COUNT,
 };
