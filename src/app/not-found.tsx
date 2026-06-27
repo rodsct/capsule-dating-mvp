@@ -10,10 +10,10 @@ export default function NotFound() {
         La página que buscas no está en ninguna máquina.
       </p>
       <Link
-        href="/lobby"
+        href="/"
         className="mt-5 rounded-full bg-cyber-neon px-5 py-2.5 text-sm font-bold text-black"
       >
-        Volver a la sala
+        Volver a la máquina
       </Link>
     </div>
   );

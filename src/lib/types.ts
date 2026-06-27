@@ -1,30 +1,47 @@
-export type MachineId =
-  | "romance"
+/** The single vending machine of the app: a capsule machine for CDMX. */
+export type MachineId = "cdmx";
+
+/** Identifier of the orientation / seeking group a capsule belongs to. */
+export type GenderCode =
+  | "mujer-busca-hombre"
+  | "hombre-busca-mujer"
   | "amistad"
-  | "aventura"
-  | "conversacion"
-  | "networking";
+  | "no-binario"
+  | "lgbtq"
+  | "mujer-busca-mujer"
+  | "hombre-busca-hombre";
+
+export interface GenderCodeInfo {
+  /** stable id stored on a profile */
+  code: GenderCode;
+  /** short Spanish label, e.g. "Mujer busca hombre" */
+  label: string;
+  /** hex color used for the ring / badge */
+  color: string;
+}
+
+/** Preset gradient used as the body of a capsule orb. */
+export interface CapsulePreset {
+  id: string;
+  name: string;
+  gradient: [string, string];
+}
 
 export interface VendingMachine {
   id: MachineId;
   name: string;
-  /** Japanese kanji shown on the sign for a hint of gacha flavor */
-  kanji: string;
-  tagline: string;
+  subtitle: string;
   description: string;
-  emoji: string;
-  /** Tailwind-friendly gradient stops for the machine body */
-  gradient: [string, string];
-  /** hex neon accent for the sign ring/glow */
-  signColor: string;
   /** price per action in MXN (buy = place) */
   price: number;
+  /** total slots on the single machine */
+  slots: number;
 }
 
 /**
- * A capsule profile. Public data (firstName, age, hobbies, emoji) is shown on
- * the slot before purchase. Revealed data (bio, photo, love language, song,
- * looking for) is only shown after purchase.
+ * A capsule profile. Public data is shown before purchase (firstName, age,
+ * alcaldía, hobbies, emoji, genderCode). Revealed data (bio, photoUrl, love
+ * language, song, lookingFor) is only shown after purchase.
  */
 export interface CapsuleProfile {
   id: string;
@@ -32,20 +49,24 @@ export interface CapsuleProfile {
   firstName: string;
   age: number;
   emoji: string;
-  hobbies: string[]; // 3-5 short tags for the public slot
+  alcaldia: string;
+  hobbies: string[];
+  genderCode: GenderCode;
+  /** custom gradient chosen when the capsule was placed */
+  capsuleGradient: [string, string];
   /** revealed only after purchase */
   fullName: string;
   bio: string;
   loveLanguage: string;
   lookingFor: string;
   song: string;
-  /** colored gradient used as the "photo" after reveal */
-  photoGradient: [string, string];
+  /** gift photo URL the owner left (revealed after purchase) */
+  photoUrl: string;
 }
 
 export interface SlotPlacement {
   machineId: MachineId;
-  slot: number; // 0..15
+  slot: number;
   /** demo profile id, or "me" when the slot holds the user's own capsule */
   profileId: string;
 }
@@ -61,7 +82,11 @@ export interface OwnCapsule {
   emoji: string;
   firstName: string;
   age: number;
+  alcaldia: string;
   hobbies: string[];
+  genderCode: GenderCode;
+  capsuleGradient: [string, string];
+  photoUrl: string;
   bio: string;
 }
 
@@ -74,7 +99,7 @@ export interface PurchaseRecord {
 
 export interface ChatMessage {
   id: string;
-  /** true if the message was sent by the demo user (us), false if "them" */
+  /** true if the message was sent by the user (us), false if "them" */
   mine: boolean;
   text: string;
   at: number;

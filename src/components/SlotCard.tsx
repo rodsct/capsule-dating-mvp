@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
-import type { CapsuleProfile } from "@/lib/types";
+import { MapPin, Plus } from "lucide-react";
+import type { CapsuleProfile, OwnCapsule } from "@/lib/types";
 import { classNames } from "@/lib/utils";
+import { genderInfo } from "@/data/mock-data";
 
 export type SlotKind = "occupied" | "empty" | "mine";
 
@@ -11,20 +12,20 @@ interface Props {
   slot: number;
   kind: SlotKind;
   profile?: CapsuleProfile;
-  signColor: string;
+  ownCapsule?: OwnCapsule | null;
   gradient: [string, string];
-  onClick?: () => void;
   index?: number;
+  onClick?: () => void;
 }
 
 export function SlotCard({
   slot,
   kind,
   profile,
-  signColor,
+  ownCapsule,
   gradient,
-  onClick,
   index = 0,
+  onClick,
 }: Props) {
   if (kind === "empty") {
     return (
@@ -37,26 +38,33 @@ export function SlotCard({
         whileHover={{ y: -3 }}
         whileTap={{ scale: 0.97 }}
         className={classNames(
-          "slot-empty group relative aspect-square rounded-xl border border-white/10",
+          "slot-empty group relative aspect-square rounded-xl border border-dashed",
           "flex flex-col items-center justify-center gap-1 p-2 text-center",
-          "hover:border-white/25 transition-colors",
+          "border-white/15 hover:border-cyber-lime/60 transition-colors",
         )}
         aria-label={`Espacio ${slot + 1} libre — coloca tu cápsula`}
       >
         <div
-          className="grid h-9 w-9 place-items-center rounded-full border border-white/15 text-white/40 transition-colors group-hover:text-white"
+          className="grid h-8 w-8 place-items-center rounded-full border border-white/15 text-white/40 transition-colors group-hover:text-cyber-lime"
         >
           <Plus className="h-4 w-4" />
         </div>
-        <span className="text-[10px] uppercase tracking-wider text-white/30">
+        <span className="text-[10px] font-semibold uppercase tracking-wide text-white/40">
           Libre
         </span>
-        <span className="text-[9px] text-white/25">$29</span>
+        <span className="text-[9px] text-cyber-lime/80">$29 MXN</span>
       </motion.button>
     );
   }
 
   // occupied / mine
+  const ring = profile
+    ? genderInfo(profile.genderCode)?.color
+    : ownCapsule
+      ? genderInfo(ownCapsule.genderCode)?.color
+      : "#ffffff";
+  const grad = profile?.capsuleGradient ?? gradient;
+
   return (
     <motion.button
       type="button"
@@ -74,19 +82,19 @@ export function SlotCard({
       )}
       style={{
         background:
-          `linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))`,
-        ["--glow" as string]: `${signColor}55`,
+          "linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))",
+        ["--glow" as string]: `${ring}55`,
       }}
       aria-label={
         kind === "mine"
           ? `Tu cápsula en el espacio ${slot + 1}`
-          : `Abrir cápsula de ${profile?.firstName ?? "—"}`
+          : `Ver cápsula de ${profile?.firstName ?? "—"}`
       }
     >
-      {/* glow strip */}
+      {/* gender color ring strip */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-1"
-        style={{ background: signColor, opacity: 0.85 }}
+        style={{ background: ring, opacity: 0.95 }}
       />
       {kind === "mine" && (
         <span className="absolute right-1.5 top-1.5 z-10 rounded-full bg-cyber-lime/90 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-black">
@@ -95,39 +103,58 @@ export function SlotCard({
       )}
 
       <div
-        className="cap-orb relative grid h-12 w-12 place-items-center rounded-full text-lg"
+        className="cap-orb relative grid h-12 w-12 place-items-center rounded-full text-lg ring-2"
         style={
           {
-            "--cap-top": gradient[0],
-            "--cap-bot": gradient[1],
-            "--cap-glow": `${signColor}66`,
+            "--cap-top": grad[0],
+            "--cap-bot": grad[1],
+            "--cap-glow": `${ring}66`,
+            boxShadow: `inset 0 -4px 8px rgba(0,0,0,0.4), inset 0 3px 4px rgba(255,255,255,0.4), 0 0 12px ${ring}55`,
+            borderColor: ring,
           } as React.CSSProperties
         }
       >
         <span className="leading-none drop-shadow">
-          {kind === "mine" ? profile?.emoji ?? "🫧" : profile?.emoji ?? "🫧"}
+          {kind === "mine" ? ownCapsule?.emoji ?? "🫧" : profile?.emoji ?? "🫧"}
         </span>
       </div>
 
       <div className="w-full text-center">
         <div className="truncate text-xs font-semibold text-white">
-          {profile?.firstName ?? "—"}
+          {kind === "mine" ? ownCapsule?.firstName : profile?.firstName}
         </div>
-        {profile?.age ? (
-          <div className="text-[10px] text-white/45">{profile.age} años</div>
-        ) : null}
+        <div className="text-[10px] text-white/50">
+          {(kind === "mine" ? ownCapsule?.age : profile?.age) ?? "—"} años
+        </div>
+      </div>
+
+      <div className="flex w-full items-center justify-center gap-0.5 text-[9px] text-white/50">
+        <MapPin className="h-2.5 w-2.5 shrink-0" />
+        <span className="truncate">
+          {kind === "mine" ? ownCapsule?.alcaldia : profile?.alcaldia}
+        </span>
       </div>
 
       <div className="flex w-full flex-wrap justify-center gap-0.5">
-        {(profile?.hobbies ?? []).slice(0, 3).map((h) => (
-          <span
-            key={h}
-            className="max-w-full truncate rounded-full bg-white/5 px-1.5 py-0.5 text-[8px] text-white/55"
-          >
-            {h}
-          </span>
-        ))}
+        {(kind === "mine" ? ownCapsule?.hobbies : profile?.hobbies)
+          ?.slice(0, 3)
+          .map((h) => (
+            <span
+              key={h}
+              className="max-w-full truncate rounded-full bg-white/5 px-1.5 py-0.5 text-[8px] text-white/55"
+            >
+              {h}
+            </span>
+          ))}
       </div>
+
+      <span
+        className="mt-0.5 inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-semibold"
+        style={{ background: `${ring}22`, color: ring }}
+      >
+        {genderInfo(kind === "mine" ? ownCapsule?.genderCode ?? "amistad" : profile?.genderCode ?? "amistad")
+          ?.label.split(" ")[0]}
+      </span>
     </motion.button>
   );
 }

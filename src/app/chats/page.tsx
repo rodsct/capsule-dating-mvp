@@ -4,7 +4,7 @@ import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { getProfile } from "@/data/mock-data";
 import { useGame } from "@/lib/auth";
-import { photoGradient } from "@/lib/utils";
+import { capsuleGradient } from "@/lib/utils";
 
 export default function ChatsPage() {
   const { chats, ready } = useGame();
@@ -23,10 +23,10 @@ export default function ChatsPage() {
             Aún no tienes chats. Compra una cápsula para empezar.
           </p>
           <Link
-            href="/lobby"
+            href="/"
             className="mt-4 inline-block rounded-full bg-cyber-neon px-5 py-2.5 text-sm font-bold text-black"
           >
-            Ir a la sala
+            Ir a la máquina
           </Link>
         </div>
       ) : (
@@ -44,7 +44,7 @@ export default function ChatsPage() {
                   className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-lg"
                   style={
                     profile
-                      ? { background: photoGradient(profile.photoGradient) }
+                      ? { background: capsuleGradient(profile.capsuleGradient) }
                       : undefined
                   }
                 >

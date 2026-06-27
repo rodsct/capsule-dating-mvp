@@ -9,7 +9,7 @@ import type {
   PurchaseRecord,
   SlotPlacement,
 } from "@/lib/types";
-import { seedPlacements } from "@/data/mock-data";
+import { seedPlacements, SLOTS_COUNT } from "@/data/mock-data";
 
 const USERS_KEY = "cdx:users";
 const SESSION_KEY = "cdx:session";
@@ -24,6 +24,8 @@ const DEMO_MONEDAS = 100;
 const STARTING_MONEDAS = 29;
 /** How much a "buy" or "place" action costs in monedas. */
 const ACTION_COST = 29;
+
+const CDMX: MachineId = "cdmx";
 
 function safeParse<T>(raw: string | null, fallback: T): T {
   if (!raw) return fallback;
@@ -142,6 +144,8 @@ export interface GameStore {
   logout: () => void;
   login: (username: string) => AuthUser | null;
   register: (username: string) => AuthUser;
+  /** First empty slot index on the CDMX machine, or null if full. */
+  firstFreeSlot: () => number | null;
 }
 
 export function useGame(): GameStore {
@@ -173,6 +177,12 @@ export function useGame(): GameStore {
     writeUsers(users);
     setUser(next);
   }, []);
+
+  const firstFreeSlot = useCallback((): number | null => {
+    const taken = new Set(placements.map((p) => p.slot));
+    for (let i = 0; i < SLOTS_COUNT; i++) if (!taken.has(i)) return i;
+    return null;
+  }, [placements]);
 
   const buy = useCallback<GameStore["buy"]>(
     (machineId, slot) => {
@@ -355,5 +365,8 @@ export function useGame(): GameStore {
     logout,
     login,
     register,
+    firstFreeSlot,
   };
 }
+
+export { CDMX };

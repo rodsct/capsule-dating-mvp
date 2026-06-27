@@ -9,10 +9,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 glass-strong">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-        <Link href="/lobby" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-cyber-neon drop-shadow-[0_0_6px_rgba(255,43,214,0.7)]" />
           <span className="font-display text-base font-bold tracking-tight">
-            Capsule<span className="text-cyber-neon neon-text">Dating</span>
+            Capsule<span className="text-cyber-neon neon-text">CDMX</span>
           </span>
         </Link>
         <div className="flex items-center gap-2">

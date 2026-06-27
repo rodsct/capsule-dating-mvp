@@ -6,7 +6,7 @@ import { useParams, notFound } from "next/navigation";
 import { ArrowLeft, Send } from "lucide-react";
 import { getProfile } from "@/data/mock-data";
 import { useGame } from "@/lib/auth";
-import { photoGradient } from "@/lib/utils";
+import { capsuleGradient } from "@/lib/utils";
 
 const REPLIES = [
   "¡Hola! Me late tu mensaje 😊",
@@ -53,7 +53,7 @@ function ChatInner() {
       <div className="glass flex items-center gap-3 rounded-2xl p-3">
         <div
           className="grid h-11 w-11 place-items-center rounded-full text-lg"
-          style={{ background: photoGradient(profile.photoGradient) }}
+          style={{ background: capsuleGradient(profile.capsuleGradient) }}
         >
           {profile.emoji}
         </div>
@@ -62,7 +62,7 @@ function ChatInner() {
             {profile.fullName}
           </div>
           <div className="text-[11px] text-white/50">
-            {profile.age} años · {profile.machineId}
+            {profile.age} años · {profile.alcaldia}
           </div>
         </div>
       </div>

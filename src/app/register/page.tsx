@@ -9,7 +9,7 @@ import { useGame } from "@/lib/auth";
 function RegisterForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get("next") || "/lobby";
+  const next = params.get("next") || "/";
   const { register } = useGame();
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);

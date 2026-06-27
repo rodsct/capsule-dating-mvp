@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Gamepad2, MessageCircle, User, Boxes } from "lucide-react";
+import { Boxes, MessageCircle, User, Package } from "lucide-react";
 import { useGame } from "@/lib/auth";
 import { classNames } from "@/lib/utils";
 
 const LINKS = [
-  { href: "/lobby", label: "Sala", icon: Gamepad2, badge: "none" as const },
-  { href: "/profile/me", label: "Cápsulas", icon: Boxes, badge: "bought" as const },
+  { href: "/", label: "Máquina", icon: Package, badge: "none" as const },
+  { href: "/profile/me", label: "Mis cápsulas", icon: Boxes, badge: "bought" as const },
   { href: "/chats", label: "Chats", icon: MessageCircle, badge: "unread" as const },
   { href: "/profile/me", label: "Perfil", icon: User, badge: "none" as const },
 ];
@@ -34,14 +34,17 @@ export function Navigation() {
         {LINKS.map((l) => {
           const isProfileRoute = l.href === "/profile/me";
           let active =
-            l.href === "/lobby"
-              ? pathname === "/lobby" ||
+            l.href === "/"
+              ? pathname === "/" ||
                 pathname.startsWith("/machine") ||
                 pathname.startsWith("/place")
               : l.href === "/chats"
                 ? pathname === "/chats" || pathname.startsWith("/chat/")
                 : false;
-          if (isProfileRoute && l.label === "Cápsulas") {
+          if (isProfileRoute && l.label === "Mis cápsulas") {
+            active = pathname === "/profile/me" && false;
+          }
+          if (isProfileRoute && l.label === "Perfil") {
             active = pathname === "/profile/me";
           }
           const badge = values[l.badge];

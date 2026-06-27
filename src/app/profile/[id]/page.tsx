@@ -2,15 +2,23 @@
 
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
-import { ArrowLeft, Heart, MessageCircle, Music2, CheckCircle2 } from "lucide-react";
-import { getProfile, getMachine } from "@/data/mock-data";
-import { photoGradient } from "@/lib/utils";
+import {
+  ArrowLeft,
+  Heart,
+  MessageCircle,
+  Music2,
+  CheckCircle2,
+  MapPin,
+  ImageIcon,
+} from "lucide-react";
+import { getProfile, genderInfo } from "@/data/mock-data";
+import { classNames } from "@/lib/utils";
 
 export default function ProfilePage() {
   const params = useParams<{ id: string }>();
   const profile = getProfile(params.id);
   if (!profile) return notFound();
-  const machine = getMachine(profile.machineId);
+  const ring = genderInfo(profile.genderCode)?.color ?? "#ff2bd6";
 
   return (
     <div className="py-2 space-y-4">
@@ -18,33 +26,53 @@ export default function ProfilePage() {
         href="/chats"
         className="inline-flex items-center gap-1 text-xs text-white/55 hover:text-white"
       >
-        <ArrowLeft className="h-4 w-4" /> Volver
+        <ArrowLeft className="h-4 w-4" /> Volver a chats
       </Link>
 
-      <div
-        className="relative w-full overflow-hidden rounded-2xl border border-white/10"
-        style={{
-          background: photoGradient(profile.photoGradient),
-          height: 240,
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-cyber-bg/85 via-transparent to-transparent" />
+      {/* Gift photo */}
+      <div className="relative w-full overflow-hidden rounded-2xl border border-white/10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={profile.photoUrl}
+          alt={`Regalo de ${profile.firstName}`}
+          className="h-60 w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-cyber-bg/90 via-cyber-bg/10 to-transparent" />
+        <div className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white/80">
+          <ImageIcon className="h-3 w-3" /> Regalo
+        </div>
         <div className="absolute bottom-3 left-4 right-4">
           <div className="text-2xl font-display font-bold">
             {profile.emoji} {profile.fullName}
           </div>
-          <div className="text-xs text-white/70">
-            {profile.age} años
-            {machine && ` · ${machine.name}`}
+          <div className="mt-0.5 inline-flex items-center gap-2 text-xs text-white/80">
+            <span>{profile.age} años</span>
+            <span aria-hidden>·</span>
+            <span className="inline-flex items-center gap-1">
+              <MapPin className="h-3 w-3" /> {profile.alcaldia}
+            </span>
+          </div>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            <span
+              className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+              style={{ background: `${ring}33`, color: ring }}
+            >
+              <span
+                className="h-2 w-2 rounded-full"
+                style={{ background: ring }}
+              />
+              {genderInfo(profile.genderCode)?.label}
+            </span>
           </div>
         </div>
       </div>
 
-      <p className="text-sm text-white/75">{profile.bio}</p>
+      <p className="text-sm text-white/80">{profile.bio}</p>
 
+      {/* Interests */}
       <div>
         <div className="mb-2 text-[10px] uppercase tracking-wider text-white/45">
-          Hobbies
+          Intereses
         </div>
         <div className="flex flex-wrap gap-2">
           {profile.hobbies.map((h) => (
@@ -83,7 +111,7 @@ function Info({
   full?: boolean;
 }) {
   return (
-    <div className={`glass rounded-xl p-3 ${full ? "sm:col-span-2" : ""}`}>
+    <div className={classNames("glass rounded-xl p-3", full && "sm:col-span-2")}>
       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/45">
         <Icon className="h-3 w-3" /> {label}
       </div>

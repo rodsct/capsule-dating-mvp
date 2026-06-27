@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Boxes, Coins, LogOut, MessageCircle, Trash2, Plus } from "lucide-react";
 import { useGame } from "@/lib/auth";
 import { getProfile } from "@/data/mock-data";
-import { formatMXN, photoGradient, SLOTS_PER_MACHINE } from "@/lib/utils";
+import { formatMXN, capsuleGradient } from "@/lib/utils";
 
 const ADD_AMOUNTS = [29, 100, 500];
 
@@ -109,10 +109,9 @@ export default function MyProfilePage() {
         </h2>
         {mine.length === 0 ? (
           <div className="glass rounded-2xl p-5 text-center text-xs text-white/55">
-            No has publicado ninguna cápsula. Entra a una máquina y elige un
-            espacio libre.{" "}
-            <Link href="/lobby" className="text-cyber-cyan underline">
-              Ir a la sala
+            No has publicado ninguna cápsula.{" "}
+            <Link href="/" className="text-cyber-cyan underline">
+              Ve a la máquina y elige un espacio libre.
             </Link>
           </div>
         ) : (
@@ -123,14 +122,23 @@ export default function MyProfilePage() {
                 className="glass flex items-center justify-between gap-3 rounded-xl p-3"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">{ownCapsule?.emoji ?? "🫧"}</span>
+                  <div
+                    className="grid h-9 w-9 place-items-center rounded-full text-base"
+                    style={{
+                      background: ownCapsule
+                        ? capsuleGradient(ownCapsule.capsuleGradient)
+                        : undefined,
+                    }}
+                  >
+                    {ownCapsule?.emoji ?? "🫧"}
+                  </div>
                   <div>
                     <div className="text-sm font-semibold">
-                      {ownCapsule?.firstName ?? "Tú"} · {p.machineId} · espacio{" "}
-                      {p.slot + 1}
+                      {ownCapsule?.firstName ?? "Tú"} · {ownCapsule?.alcaldia} ·
+                      espacio {p.slot + 1}
                     </div>
                     <div className="text-[10px] text-white/45">
-                      {SLOTS_PER_MACHINE} slots por máquina
+                      Máquina CDMX
                     </div>
                   </div>
                 </div>
@@ -154,8 +162,8 @@ export default function MyProfilePage() {
         {purchases.length === 0 ? (
           <div className="glass rounded-2xl p-5 text-center text-xs text-white/55">
             Aún no has comprado cápsulas.{" "}
-            <Link href="/lobby" className="text-cyber-cyan underline">
-              Explorar máquinas
+            <Link href="/" className="text-cyber-cyan underline">
+              Explorar la máquina
             </Link>
           </div>
         ) : (
@@ -171,7 +179,7 @@ export default function MyProfilePage() {
                 >
                   <div
                     className="mx-auto grid h-12 w-12 place-items-center rounded-full text-lg"
-                    style={{ background: photoGradient(profile.photoGradient) }}
+                    style={{ background: capsuleGradient(profile.capsuleGradient) }}
                   >
                     {profile.emoji}
                   </div>
