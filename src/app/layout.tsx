@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Navigation } from "@/components/Navigation";
+import { AppSessionProvider } from "@/components/SessionProvider";
 import { Space_Grotesk } from "next/font/google";
 
 const spaceGrotesk = Space_Grotesk({
@@ -27,11 +28,13 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.className} min-h-screen text-white selection:bg-cyber-neon/60`}
       >
-        <Header />
-        <main className="mx-auto max-w-3xl px-4 pb-24 pt-4 sm:pb-10">
-          {children}
-        </main>
-        <Navigation />
+        <AppSessionProvider>
+          <Header />
+          <main className="mx-auto max-w-3xl px-4 pb-24 pt-4 sm:pb-10">
+            {children}
+          </main>
+          <Navigation />
+        </AppSessionProvider>
       </body>
     </html>
   );

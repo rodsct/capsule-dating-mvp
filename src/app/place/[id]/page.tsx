@@ -29,7 +29,7 @@ export const PHOTO_PLACEHOLDERS = [
 function PlaceInner() {
   const search = useSearchParams();
   const router = useRouter();
-  const { user, ready, placeOwn } = useGame();
+  const { user, ready, status, placeOwn } = useGame();
 
   const slot = Number(search.get("slot") ?? "0");
 
@@ -43,6 +43,24 @@ function PlaceInner() {
   const [photoUrl, setPhotoUrl] = useState("");
   const [bio, setBio] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  if (ready && status !== "authenticated") {
+    return (
+      <div className="mx-auto max-w-sm py-10 text-center">
+        <h1 className="font-display text-lg font-bold">Entrar para publicar</h1>
+        <p className="mt-1 text-sm text-white/55">
+          Entra con Google para publicar tu cápsula. Cuesta 1 crédito (
+          {formatMXN(CREDIT_PRICE)}).
+        </p>
+        <Link
+          href={`/login?next=${encodeURIComponent(`/place/cdmx?slot=${slot}`)}`}
+          className="mt-4 inline-block rounded-full bg-cyber-neon px-5 py-2.5 text-sm font-bold text-black"
+        >
+          Entra con Google
+        </Link>
+      </div>
+    );
+  }
 
   if (ready && (!user || user.credits < PLACE_COST_CREDITS)) {
     return (

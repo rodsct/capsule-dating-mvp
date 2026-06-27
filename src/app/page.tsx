@@ -17,12 +17,14 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
 import type { CapsuleProfile } from "@/lib/types";
 import { MACHINE, ACTION_COST_CREDITS, CREDIT_PRICE, genderInfo, getProfile } from "@/data/mock-data";
 import { useGame } from "@/lib/auth";
 import { MachineGrid } from "@/components/MachineGrid";
 import { Keypad } from "@/components/Keypad";
 import { DispenseTray } from "@/components/DispenseTray";
+import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import {
   classNames,
   formatMXN,
@@ -37,7 +39,9 @@ const INVALID_MSG: Msg = { text: "Inválido", tone: "warn" };
 const EMPTY_MSG: Msg = { text: "Vacío", tone: "info" };
 
 export default function HomePage() {
+  const { status: authStatus } = useSession();
   const { user, ready, placements, ownCapsule, buy } = useGame();
+  const viewOnly = authStatus === "unauthenticated";
 
   const [typed, setTyped] = useState<string>("");
   const [phase, setPhase] = useState<Phase>("idle");
@@ -105,6 +109,10 @@ export default function HomePage() {
 
   const runBuy = () => {
     if (phase !== "idle") return;
+    if (viewOnly) {
+      setMsg({ text: "Entra con Google para comprar", tone: "warn" });
+      return;
+    }
     const slot = parseSlotCode(typed);
     if (slot === null) {
       setMsg(INVALID_MSG);
@@ -193,6 +201,21 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Unauthenticated CTA — view-only mode */}
+      {viewOnly && (
+        <div className="mb-4 glass-strong rounded-2xl p-4 text-center">
+          <p className="text-sm font-semibold text-white/90">
+            Estás viendo la máquina en modo vista previa.
+          </p>
+          <p className="mt-1 text-xs text-white/55">
+            Entra con Google para comprar o publicar tu cápsula.
+          </p>
+          <div className="mt-3 flex justify-center">
+            <GoogleSignInButton callbackUrl="/" label="Entra con Google" />
+          </div>
+        </div>
+      )}
+
       {/* The vending machine body */}
       <div className="vm-chrome relative rounded-3xl p-3 sm:p-4">
         {/* illuminated sign */}
@@ -271,7 +294,7 @@ export default function HomePage() {
             {/* keypad */}
             <Keypad
               onKey={handleKey}
-              onBuy={runBuy}
+              onBuy={viewOnly ? undefined : runBuy}
               buying={buying}
               buyDisabled={phase !== "idle" || selectedSlot === null}
               buyLabel={
@@ -287,7 +310,9 @@ export default function HomePage() {
 
             {/* slot-state CTA under the keypad */}
             <div className="mt-3 min-h-9 text-[11px]">
-              {selectedSlot === null ? (
+              {viewOnly ? (
+                <ViewOnlyCTA />
+              ) : selectedSlot === null ? (
                 <p className="text-white/40">
                   Toca una cápsula o escribe su número (01–
                   {formatSlotCode(MACHINE.slots - 1)}).
@@ -346,7 +371,7 @@ export default function HomePage() {
         </span>
       </div>
 
-      {!ready && (
+      {(!ready || authStatus === "loading") && (
         <div className="grid place-items-center py-16 text-sm text-white/50">
           Cargando máquina…
         </div>
@@ -402,6 +427,23 @@ function NoCreditsCTA() {
       >
         <Coins className="h-3 w-3" /> Recargar créditos
       </Link>
+    </div>
+  );
+}
+
+function ViewOnlyCTA() {
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-white/55">
+        Inicia sesión para comprar esta cápsula o publicar la tuya.
+      </p>
+      <div className="w-full">
+        <GoogleSignInButton
+          callbackUrl="/"
+          label="Entra con Google"
+          fullWidth={false}
+        />
+      </div>
     </div>
   );
 }

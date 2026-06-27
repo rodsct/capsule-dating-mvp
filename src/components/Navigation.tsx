@@ -6,16 +6,29 @@ import { Boxes, MessageCircle, User, Package } from "lucide-react";
 import { useGame } from "@/lib/auth";
 import { classNames } from "@/lib/utils";
 
-const LINKS = [
-  { href: "/", label: "Máquina", icon: Package, badge: "none" as const },
-  { href: "/profile/me", label: "Mis cápsulas", icon: Boxes, badge: "bought" as const },
-  { href: "/chats", label: "Chats", icon: MessageCircle, badge: "unread" as const },
-  { href: "/profile/me", label: "Perfil", icon: User, badge: "none" as const },
+interface NavLink {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge: "none" | "bought" | "unread";
+  /** Only show this tab to authenticated users (hides it otherwise). */
+  authOnly?: boolean;
+}
+
+const LINKS: NavLink[] = [
+  { href: "/", label: "Máquina", icon: Package, badge: "none" },
+  { href: "/profile/me", label: "Mis cápsulas", icon: Boxes, badge: "bought", authOnly: true },
+  { href: "/chats", label: "Chats", icon: MessageCircle, badge: "unread", authOnly: true },
+  { href: "/profile/me", label: "Perfil", icon: User, badge: "none" },
 ];
 
 export function Navigation() {
   const pathname = usePathname();
-  const { chats, purchases } = useGame();
+  const { chats, purchases, user, ready, status } = useGame();
+
+  // While the session is resolving, keep all tabs visible to avoid flicker.
+  const authed = ready && status === "authenticated" && !!user;
+  const hideAuthOnly = ready && !authed;
 
   const unreadCount = Object.values(chats).reduce(
     (acc, list) =>
@@ -53,8 +66,13 @@ export function Navigation() {
             <Link
               key={`${l.href}-${l.label}`}
               href={l.href}
+              aria-hidden={hideAuthOnly && l.authOnly ? true : undefined}
+              tabIndex={hideAuthOnly && l.authOnly ? -1 : undefined}
               className={classNames(
                 "relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-[10px] transition-colors",
+                hideAuthOnly && l.authOnly
+                  ? "pointer-events-none opacity-30"
+                  : "",
                 active ? "text-cyber-neon" : "text-white/55 hover:text-white",
               )}
             >

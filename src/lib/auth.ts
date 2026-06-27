@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import type {
   AuthUser,
   ChatMessage,
@@ -19,8 +20,6 @@ const CHATS_KEY = "cdx:chats";
 const OWN_CAPSULE_KEY = "cdx:own-capsule";
 const SEEDED_KEY = "cdx:seeded";
 
-const DEMO_USERNAME = "demo_chilango";
-const DEMO_CREDITS = 20;
 const STARTING_CREDITS = 1;
 /** How much a "buy" or "place" action costs in créditos. */
 const ACTION_COST = 1;
@@ -108,50 +107,66 @@ function writeOwnCapsule(c: OwnCapsule | null) {
   else localStorage.setItem(OWN_CAPSULE_KEY, JSON.stringify(c));
 }
 
-function readSessionId(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem(SESSION_KEY);
-}
 function writeSessionId(id: string | null) {
   if (id === null) localStorage.removeItem(SESSION_KEY);
   else localStorage.setItem(SESSION_KEY, id);
 }
 
-/** First-run seeding: demo user, auto-session, pre-occupied demo slots. */
-function ensureSeeded() {
+/**
+ * First-run seeding: pre-populate the CDMX machine with demo capsules so it
+ * never looks empty. No demo user and no auto-session are created anymore —
+ * users must authenticate via Google (or the username fallback) to play.
+ */
+function ensurePlacementsSeeded() {
   if (typeof window === "undefined") return;
   if (localStorage.getItem(SEEDED_KEY) === "1") return;
-
-  const users = readUsers();
-  let demo = users.find((u) => u.username === DEMO_USERNAME);
-  if (!demo) {
-    demo = {
-      id: `u-demo-${Math.random().toString(36).slice(2, 8)}`,
-      username: DEMO_USERNAME,
-      credits: DEMO_CREDITS,
-      createdAt: Date.now(),
-    };
-    users.push(demo);
-    writeUsers(users);
-  }
-  writeSessionId(demo.id);
-
   if (readPlacements().length === 0) {
     writePlacements(seedPlacements());
   }
   localStorage.setItem(SEEDED_KEY, "1");
 }
 
+/**
+ * Find or create a local AuthUser tied to an authenticated NextAuth session.
+ * Google users are keyed by their stable session id (the Google `sub`),
+ * username-fallback users by `local:<username>`. New users start with the
+ * welcome credit (1 crédito). Returns the local user (after persisting).
+ */
+export function syncSessionToLocalUser(
+  id: string,
+  name: string | null | undefined,
+  email: string | null | undefined,
+): AuthUser {
+  const users = readUsers();
+  let found = users.find((u) => u.id === id) ?? null;
+  if (!found) {
+    const username = (name ?? email ?? "cápsula").toString();
+    found = {
+      id,
+      username,
+      credits: STARTING_CREDITS,
+      createdAt: Date.now(),
+    };
+    users.push(found);
+    writeUsers(users);
+  }
+  writeSessionId(found.id);
+  return found;
+}
+
 export interface GameStore {
   ready: boolean;
+  /** Auth.js session status, mirrored here for convenience. */
+  status: "loading" | "authenticated" | "unauthenticated";
   user: AuthUser | null;
+  /** Shortcut to user.credits (0 when not signed in). */
+  credits: number;
   placements: SlotPlacement[];
   purchases: PurchaseRecord[];
   chats: Record<string, ChatMessage[]>;
   ownCapsule: OwnCapsule | null;
   /** créditos spent: returns false if not enough balance */
   buy: (machineId: MachineId, slot: number) => { ok: boolean; reason?: string };
-  removePlacement: (machineId: MachineId, slot: number) => void;
   placeOwn: (machineId: MachineId, slot: number, capsule: OwnCapsule) => boolean;
   removeOwnPlacement: (machineId: MachineId, slot: number) => void;
   sendMessage: (profileId: string, text: string) => void;
@@ -165,6 +180,7 @@ export interface GameStore {
 }
 
 export function useGame(): GameStore {
+  const { data: session, status } = useSession();
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [placements, setPlacements] = useState<SlotPlacement[]>([]);
@@ -173,17 +189,31 @@ export function useGame(): GameStore {
   const [ownCapsule, setOwnCapsule] = useState<OwnCapsule | null>(null);
 
   useEffect(() => {
-    ensureSeeded();
-    const id = readSessionId();
-    const found = id ? readUsers().find((u) => u.id === id) ?? null : null;
-    if (!found && id) writeSessionId(null);
-    setUser(found);
+    ensurePlacementsSeeded();
     setPlacements(readPlacements());
     setPurchases(readPurchases());
     setChats(readChats());
     setOwnCapsule(readOwnCapsule());
+
+    if (status === "loading") {
+      setReady(false);
+      return;
+    }
+
+    if (status === "authenticated" && session?.user) {
+      const id =
+        session.user.id ?? session.user.email ?? `local:anon-${Date.now()}`;
+      const name = session.user.name ?? session.user.email ?? null;
+      const found = syncSessionToLocalUser(id, name, session.user.email);
+      setUser(found);
+    } else {
+      // Not authenticated: clear any stale local session and stay logged out.
+      // No demo user is created anymore.
+      writeSessionId(null);
+      setUser(null);
+    }
     setReady(true);
-  }, []);
+  }, [status, session]);
 
   const persistUser = useCallback((next: AuthUser) => {
     const users = readUsers();
@@ -234,17 +264,6 @@ export function useGame(): GameStore {
       return { ok: true };
     },
     [user, placements, purchases, persistUser],
-  );
-
-  const removePlacement = useCallback<GameStore["removePlacement"]>(
-    (machineId, slot) => {
-      const next = placements.filter(
-        (p) => !(p.machineId === machineId && p.slot === slot),
-      );
-      setPlacements(next);
-      writePlacements(next);
-    },
-    [placements],
   );
 
   const placeOwn = useCallback<GameStore["placeOwn"]>(
@@ -330,7 +349,8 @@ export function useGame(): GameStore {
 
   const login = useCallback(
     (username: string) => {
-      const found = readUsers().find((u) => u.username === username) ?? null;
+      const trimmed = username.trim();
+      const found = readUsers().find((u) => u.username === trimmed) ?? null;
       if (!found) return null;
       writeSessionId(found.id);
       setUser(found);
@@ -342,15 +362,16 @@ export function useGame(): GameStore {
   const register = useCallback(
     (username: string) => {
       const trimmed = username.trim();
+      const id = `local:${trimmed}`;
       const users = readUsers();
-      const existing = users.find((u) => u.username === trimmed);
+      const existing = users.find((u) => u.id === id) ?? null;
       if (existing) {
         writeSessionId(existing.id);
         setUser(existing);
         return existing;
       }
       const newUser: AuthUser = {
-        id: `u-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        id,
         username: trimmed,
         credits: STARTING_CREDITS,
         createdAt: Date.now(),
@@ -366,13 +387,14 @@ export function useGame(): GameStore {
 
   return {
     ready,
+    status,
     user,
+    credits: user?.credits ?? 0,
     placements,
     purchases,
     chats,
     ownCapsule,
     buy,
-    removePlacement,
     placeOwn,
     removeOwnPlacement,
     sendMessage,
